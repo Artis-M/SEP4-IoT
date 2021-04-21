@@ -83,9 +83,8 @@ void task1( void *pvParameters )
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 
 		float humidity = 0;
-		int temperature = 0;
-		int light = 0;
-		float light1 = 0.0;
+		float temperature = 0;
+		float light = 0;
 		//char *s;
 		
 		if ( HIH8120_OK != hih8120_wakeup() )
@@ -102,7 +101,7 @@ void task1( void *pvParameters )
 		{
 			// Something went wrong
 			// Investigate the return code further
-			printf("%d", initializedTemp);
+			printf("%d \n", initializedTemp);
 			puts("Task1 failed to work again");
 		}
 		
@@ -110,28 +109,28 @@ void task1( void *pvParameters )
 
 		if ( TSL2591_OK == tsl2591_enable() )
 		{
-			printf("Light enabled");
+			puts("Light enabled");
 			// The power up command is now send to the sensor - it can be powered down with a call to tsl2591_disable()
 		}
 		
 		if ( TSL2591_OK != tsl2591_fetchData() )
 		{
-			printf("Light not fetched");
+			puts("Light not fetched");
 			// Something went wrong
 			// Investigate the return code further
 		}
 		else
 		{
 			
-			light = (int)(1000 * tsl2591_getLux(&light1));
-			printf("%d bbbbbbbbbbbbbbbbbbbbb", light);
+			tsl2591_getLux(&light);
+			printf("The Light Data Received from the sensor is : %2.2f \n", light);
 		}
 		
 
-		// humidity = hih8120_getHumidity();
-		// temperature = hih8120_getTemperature();
-		humidity = 36.2;
-		printf("Humidity : %2.2f", humidity);
+		humidity = hih8120_getHumidity();
+		temperature = hih8120_getTemperature();
+
+		printf("Humidity : %2.2f \n", humidity);
 		puts("Task1"); // stdio functions are not reentrant - Should normally be protected by MUTEX
 		PORTA ^= _BV(PA0);
 		
@@ -177,14 +176,7 @@ void initialiseSystem()
 	lora_handler_initialise(3);
 }
 
-void initialiseSensors(){
-	if ( HIH8120_OK == hih8120_initialise() )
-	{
-		printf("Temp sensor initialized");
-		printf("_______________________");
-		initializedTemp = true;
-	}
-}
+
 
 void tsl2591Callback(tsl2591_returnCode_t rc)
 {
@@ -252,6 +244,19 @@ void initliazeLight()
 		printf("Light initialized\n");
 	}
 }
+void initializeTemp(){
+if ( HIH8120_OK == hih8120_initialise() )
+{
+	printf("Temp sensor initialized");
+	printf("_______________________");
+	initializedTemp = true;
+}
+}
+
+void initialiseSensors(){
+	initliazeLight();
+	initializeTemp();
+}
 
 /*-----------------------------------------------------------*/
 int main(void)
@@ -259,7 +264,6 @@ int main(void)
 	initialiseSystem(); // Must be done as the very first thing!!
 	printf("Program Started!!\n");
 	initialiseSensors();
-	initliazeLight();
 	vTaskStartScheduler(); // Initialise and run the freeRTOS scheduler. Execution should never return from here.
 
 	/* Replace with your application code */
