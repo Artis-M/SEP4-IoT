@@ -82,7 +82,7 @@ void task1( void *pvParameters )
 		
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 
-		int humidity = 0;
+		float humidity = 0;
 		int temperature = 0;
 		int light = 0;
 		float light1 = 0.0;
@@ -107,7 +107,7 @@ void task1( void *pvParameters )
 		}
 		
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-		
+
 		if ( TSL2591_OK == tsl2591_enable() )
 		{
 			printf("Light enabled");
@@ -126,14 +126,13 @@ void task1( void *pvParameters )
 			light = (int)(1000 * tsl2591_getLux(&light1));
 			printf("%d bbbbbbbbbbbbbbbbbbbbb", light);
 		}
+		
 
-		humidity = hih8120_getHumidity();
-		temperature = hih8120_getTemperature();
-
+		// humidity = hih8120_getHumidity();
+		// temperature = hih8120_getTemperature();
+		humidity = 36.2;
+		printf("Humidity : %2.2f", humidity);
 		puts("Task1"); // stdio functions are not reentrant - Should normally be protected by MUTEX
-		printf("%d aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", humidity);
-		//dtostrf(humidity, 4, 2, s);
-		//sprintf("%s aaaaaaaaaaaa", s);
 		PORTA ^= _BV(PA0);
 		
 	}
