@@ -92,7 +92,7 @@ void task1( void *pvParameters )
 		{
 			// Something went wrong
 			// Investigate the return code further
-			puts("Task1 failed to work");
+			puts("Task1 failed to work!");
 		}
 		
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
