@@ -125,11 +125,13 @@ void task1( void *pvParameters )
 			tsl2591_getLux(&light);
 			printf("The Light Data Received from the sensor is : %2.2f \n", light);
 		}
-		
 
+		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 		humidity = hih8120_getHumidity();
+		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 		temperature = hih8120_getTemperature();
 
+		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 		printf("Humidity : %2.2f \n", humidity);
 		printf("Temperature : %2.2f \n", temperature);
 		puts("Task1"); // stdio functions are not reentrant - Should normally be protected by MUTEX
