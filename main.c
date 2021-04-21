@@ -131,6 +131,7 @@ void task1( void *pvParameters )
 		temperature = hih8120_getTemperature();
 
 		printf("Humidity : %2.2f \n", humidity);
+		printf("Temperature : %2.2f \n", temperature);
 		puts("Task1"); // stdio functions are not reentrant - Should normally be protected by MUTEX
 		PORTA ^= _BV(PA0);
 		
