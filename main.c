@@ -134,9 +134,7 @@ void task1( void *pvParameters )
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 		printf("Humidity : %2.2f \n", humidity);
 		printf("Temperature : %2.2f \n", temperature);
-		puts("Task1"); // stdio functions are not reentrant - Should normally be protected by MUTEX
-		PORTA ^= _BV(PA0);
-		
+		puts("Task1"); // stdio functions are not reentrant - Should normally be protected by MUTEX	
 	}
 }
 
@@ -153,7 +151,7 @@ void task2( void *pvParameters )
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 		puts("Task2"); // stdio functions are not reentrant - Should normally be protected by MUTEX
-		PORTA ^= _BV(PA7);
+		//PORTA ^= _BV(PA7);
 	}
 }
 
@@ -161,7 +159,6 @@ void task2( void *pvParameters )
 void initialiseSystem()
 {
 	// Set output ports for leds used in the example
-	DDRA |= _BV(DDA0) | _BV(DDA7);
 
 	// Make it possible to use stdio on COM port 0 (USB) on Arduino board - Setting 57600,8,N,1
 	stdio_initialise(ser_USART0);
