@@ -123,7 +123,7 @@ void task1( void *pvParameters )
 		}
 		else
 		{
-			
+				
 			tsl2591_getLux(&light);
 			printf("The Light Data Received from the sensor is : %2.2f \n", light);
 		}
