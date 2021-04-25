@@ -20,6 +20,8 @@
 #include <hih8120.h>
 #include <tsl2591.h>
 
+#include <TemperatureHandler.h>
+
 // Needed for LoRaWAN
 #include <lora_driver.h>
 #include <status_leds.h>
@@ -126,10 +128,10 @@ void task1( void *pvParameters )
 			printf("The Light Data Received from the sensor is : %2.2f \n", light);
 		}
 
-		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-		humidity = hih8120_getHumidity();
-		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-		temperature = hih8120_getTemperature();
+	    //xTaskDelayUntil( &xLastWakeTime, xFrequency );
+		//humidity = hih8120_getHumidity();
+		//xTaskDelayUntil( &xLastWakeTime, xFrequency );
+		//temperature = hih8120_getTemperature();
 
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 		printf("Humidity : %2.2f \n", humidity);
@@ -247,18 +249,10 @@ void initliazeLight()
 		printf("Light initialized\n");
 	}
 }
-void initializeTemp(){
-if ( HIH8120_OK == hih8120_initialise() )
-{
-	printf("Temp sensor initialized");
-	printf("_______________________");
-	initializedTemp = true;
-}
-}
 
 void initialiseSensors(){
 	initliazeLight();
-	initializeTemp();
+	initializedTemp();
 }
 
 /*-----------------------------------------------------------*/
@@ -274,4 +268,3 @@ int main(void)
 	{
 	}
 }
-
