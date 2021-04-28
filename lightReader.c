@@ -21,13 +21,18 @@
 //static EventGroupHandle_t _readyMeasuringEventGroup;
 //static EventBits_t _readyBit;
 
-//typedef struct lightReader_t lightReader;
+typedef struct lightReader_t lightReader;
+
+typedef struct lightReader 
+{
+	
+};
 
 void initialiseLightDriver(){
-	if ( TSL2591_OK == tsl2591_initialise(tsl2591Callback) )
+	if ( TSL2591_OK == tsl2591_initialise(tsl2591Callback( )
 	{
-		printf("Light driver initialized");
-		printf("_______________________");
+		puts("Light driver initialized");
+		puts("Return code is: %s", tsl2591_initialise());
 	}
 }
 
@@ -93,6 +98,8 @@ void getMeasurements(){
 	if ( TSL2591_OK == tsl2591_enable() )
 	{
 		puts("Light enabled");
+		
+		//somewhere here we MIGHT need to do an else and call callback with TSL_OK
 		// The power up command is now send to the sensor - it can be powered down with a call to tsl2591_disable()
 	}
 	
@@ -104,14 +111,14 @@ void getMeasurements(){
 	}
 	else
 	{
-		tsl2591_getLux(&light); //sth wrong here. Repair later
-		printf("The Light Data Received from the sensor is : %2.2f \n", light);
+		tsl2591Callback(TSL2591_DATA_READY);
+		
+		//tsl2591_getLux(&light); //sth wrong here. Repair later
+		//printf("The Light Data Received from the sensor is : %2.2f \n", light);
 	}
-	
-	
 }
 
-float getLight(){
+uint16_t getLight(){
 	return tsl2591_getLux();
 }
 

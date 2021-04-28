@@ -149,6 +149,12 @@
     <OutputPath>bin\Test1\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CO2Handler.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="CO2Handler.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="drivers\display_7seg.h">
       <SubType>compile</SubType>
     </Compile>
@@ -288,6 +294,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="FreeRTOS\src\variantHooks.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="TemperatureHandler.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="TemperatureHandler.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>
