@@ -18,7 +18,7 @@ uint16_t getCO2Mesurement(){
 	rc = mh_z19_takeMeassuring();
 	if (rc != MHZ19_OK)
 	{
-		printf("CO2 Measurement failed.")
+		printf("CO2 Measurement failed.");
 		return 0;
 	}
 	return rc;

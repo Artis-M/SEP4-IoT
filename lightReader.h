@@ -14,12 +14,13 @@
 #include "task.h"
 #include "event_groups.h"
 
-//typedef struct  lightReader* lightReader_t;
+typedef struct lightReader* lightReader_t;
 
-lightReader_t initialiseLightDriver();
-void destroy();
-void getLight();
-void getMeasurements();
+lightReader_t initialiseLightDriver(); //remember arguments here
+void destroy(lightReader_t self);
+uint16_t getLight(lightReader_t self);
+void getMeasurements(lightReader_t self);
+void execute(lightReader_t self);
 
 
 
