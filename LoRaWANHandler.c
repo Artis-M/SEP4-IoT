@@ -158,7 +158,9 @@ void lora_handler_task( void *pvParameters )
 		getLightMeasurements(lightReader);
 		uint16_t lux = getLight(lightReader);
 		uint16_t co2_ppm = getCO2(CO2Handler); // Dummy CO2
-
+		
+		
+		
 		_uplink_payload.bytes[0] = hum >> 8;
 		_uplink_payload.bytes[1] = hum & 0xFF;
 		_uplink_payload.bytes[2] = temp >> 8;

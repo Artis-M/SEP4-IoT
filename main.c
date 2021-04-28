@@ -71,31 +71,31 @@ void create_tasks_and_semaphores(void)
 /*-----------------------------------------------------------*/
 void task1( void *pvParameters )
 {
-	TickType_t xLastWakeTime;
+ 	TickType_t xLastWakeTime;
 	const TickType_t xFrequency = 500/portTICK_PERIOD_MS; // 500 ms
 
 	// Initialise the xLastWakeTime variable with the current time.
 	xLastWakeTime = xTaskGetTickCount();
-
-	for(;;)
-	{
-		
-		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-
-		float humidity = 0;
-		float temperature = 0;
-		float light = 0;
-		//char *s;
-		
+// 
+// 	for(;;)
+// 	{
+// 		
+// 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
+// 
+// 		float humidity = 0;
+// 		float temperature = 0;
+// 		float light = 0;
+// 		//char *s;
+// 		
 // 		if ( HIH8120_OK != hih8120_wakeup() )
 // 		{
 // 			// Something went wrong
 // 			// Investigate the return code further
 // 			puts("Task1 failed to work!");
 // 		}
-		
-		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-
+// 		
+// 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
+// 
 // 		
 // 		if ( HIH8120_OK !=  hih8120_measure() )
 // 		{
@@ -138,6 +138,10 @@ void task1( void *pvParameters )
 // 		//PORTA ^= _BV(PA0);
 // 		
 // 	}
+for(;;){
+	xTaskDelayUntil( &xLastWakeTime, xFrequency );
+	puts("Task1"); // stdio functions are not reentrant - Should normally be protected by MUTEX
+}
 }
 
 /*-----------------------------------------------------------*/
