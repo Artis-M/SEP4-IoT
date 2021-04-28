@@ -9,4 +9,5 @@
 #pragma once
 
 void initialiseCO2Sensor();
-uint16_t getCO2Mesurement();
+void getCO2Mesurement(CO2Handler self);
+uint16_t getCO2(CO2Handler self)
