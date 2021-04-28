@@ -14,6 +14,9 @@
 #include <tsl2591.h>
 #include "event_groups.h"
 #include "task.h"
+#include "lightReader.h"
+
+void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self);
 
 typedef struct lightReader 
 {
@@ -30,7 +33,7 @@ lightReader_t initialiseLightDriver(){
 	if ( TSL2591_OK == tsl2591_initialise(tsl2591Callback))
 	{
 		puts("Light driver initialized");
-		puts("Return code is: %s", tsl2591_initialise());
+		printf("Return code is: %s", tsl2591_initialise(tsl2591Callback));
 	}
 	
 	return new_reader;
@@ -95,7 +98,10 @@ void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
 	}
 }
 
-void getLightMeasurements(){
+void getLightMeasurements(lightReader_t self){
+	
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = 500/portTICK_PERIOD_MS; // 500 ms
 	
 	if ( TSL2591_OK == tsl2591_enable() )
 	{
@@ -105,6 +111,8 @@ void getLightMeasurements(){
 		// The power up command is now send to the sensor - it can be powered down with a call to tsl2591_disable()
 	}
 	
+	xTaskDelayUntil( &xLastWakeTime, xFrequency );
+	
 	if ( TSL2591_OK != tsl2591_fetchData() )
 	{
 		puts("Light not fetched");
@@ -113,7 +121,7 @@ void getLightMeasurements(){
 	}
 	else
 	{
-		tsl2591Callback(TSL2591_DATA_READY);
+		tsl2591Callback(TSL2591_DATA_READY, self);
 		
 		//tsl2591_getLux(&light); //sth wrong here. Repair later
 		//printf("The Light Data Received from the sensor is : %2.2f \n", light);

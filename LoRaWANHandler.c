@@ -6,6 +6,9 @@
 */
 #include <stddef.h>
 #include <stdio.h>
+#include "lightReader.h"
+#include "TemperatureHandler.h"
+#include "CO2Handler.h"
 
 #include <ATMEGA_FreeRTOS.h>
 
@@ -22,8 +25,15 @@ void lora_handler_task( void *pvParameters );
 
 static lora_driver_payload_t _uplink_payload;
 
-temperatureHandler temperatureHandler_create();
-lightReader initialiseLightDriver();
+//temperatureHandler_t temperatureHandler;
+//lightReader_t lightReader;
+//temperatureHandler temperatureHandler_create();
+
+
+//lightReader initialiseLightDriver();
+
+//temperatureHandler_t temperatureHandler_create();
+//lightReader_t initialiseLightDriver();
 
 void lora_handler_initialise(UBaseType_t lora_handler_task_priority)
 {
@@ -123,7 +133,7 @@ void lora_handler_task( void *pvParameters )
 
 	_lora_setup();
 
-	_uplink_payload.len = 6;
+	_uplink_payload.len = 8;
 	_uplink_payload.portNo = 2;
 
 	TickType_t xLastWakeTime;
@@ -131,27 +141,42 @@ void lora_handler_task( void *pvParameters )
 	const TickType_t xFrequency = pdMS_TO_TICKS(30000UL);
 	xLastWakeTime = xTaskGetTickCount();
 	
+	temperatureHandler_t temperatureHandler = temperatureHandler_create();
+	lightReader_t lightReader = initialiseLightDriver();
+	
 	for(;;)
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 		printf("Messuring brrrrrrrrrrr");
-		getTemperatureMesurements(temperatureHandler);
-		getLightMeasurements(lightReader);
+		//getTemperatureMesurements(temperatureHandler);
+		//getLightMeasurements(lightReader);
 		
-		uint16_t hum = getHumidity(temperatureHandler);
-		int16_t temp = getTemperature(temperatureHandler);
-		uint16_t lux = getLight(lightReader);
+		//uint16_t hum = getHumidity(temperatureHandler);
+		//int16_t temp = getTemperature(temperatureHandler);
+		//uint16_t lux = getLight(lightReader);
 		
-		uint16_t co2_ppm = 1050; // Dummy CO2
+		 uint16_t hum = 2 * 100;
+		 int16_t temp = 36.6 * 100;
+		 uint16_t lux = 1024;
+		 uint16_t co2_ppm = 900; // Dummy CO2
 
-		_uplink_payload.bytes[0] = hum >> 8;
-		_uplink_payload.bytes[1] = hum & 0xFF;
-		_uplink_payload.bytes[2] = temp >> 8;
-		_uplink_payload.bytes[3] = temp & 0xFF;
-		_uplink_payload.bytes[4] = co2_ppm >> 8;
-		_uplink_payload.bytes[5] = co2_ppm & 0xFF;
-		_uplink_payload.bytes[6] = lux >> 8;
-		_uplink_payload.bytes[7] = lux & 0xFF;
+		 _uplink_payload.bytes[0] = (hum >> 8) & 0xFF;
+		 _uplink_payload.bytes[1] = hum & 0xFF;
+		 _uplink_payload.bytes[2] = (temp >> 8) & 0xFF;
+		 _uplink_payload.bytes[3] = temp & 0xFF & 0xFF;
+		 _uplink_payload.bytes[4] = (co2_ppm >> 8) & 0xFF;
+		 _uplink_payload.bytes[5] = co2_ppm & 0xFF & 0xFF;
+		 _uplink_payload.bytes[6] = (lux >> 8) & 0xFF;
+		 _uplink_payload.bytes[7] = lux & 0xFF & 0xFF;
+
+		//_uplink_payload.bytes[0] = hum >> 8;
+		//_uplink_payload.bytes[1] = hum & 0xFF;
+		//_uplink_payload.bytes[2] = temp >> 8;
+		//_uplink_payload.bytes[3] = temp & 0xFF;
+		//_uplink_payload.bytes[4] = co2_ppm >> 8;
+		//_uplink_payload.bytes[5] = co2_ppm & 0xFF;
+		//_uplink_payload.bytes[6] = lux >> 8;
+		//_uplink_payload.bytes[7] = lux & 0xFF;
 
 		status_leds_shortPuls(led_ST4);  // OPTIONAL
 		printf("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));

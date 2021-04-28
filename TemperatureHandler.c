@@ -5,8 +5,15 @@
  * Created: 4/25/2021 3:55:16 PM
  *  Author: Artis
  */ 
+
+#include <avr/io.h>
+
+#include <ATMEGA_FreeRTOS.h>
+#include <task.h>
+#include <semphr.h>
 #include <hih8120.h>
 #include <stdio.h>
+#include "TemperatureHandler.h"
 
 typedef struct temperatureHandler{
 	int16_t temperature;
@@ -29,6 +36,10 @@ temperatureHandler_t temperatureHandler_create(){
 	return _new_reader;
 }
 void getTemperatureMesurements(temperatureHandler_t self){
+	
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = 500/portTICK_PERIOD_MS; // 500 ms
+	
 	if ( HIH8120_OK != hih8120_wakeup() )
 	{
 		// Something went wrong
@@ -54,5 +65,5 @@ int16_t getTemperature(temperatureHandler_t self){
 			return self->temperature;
 }
 uint16_t getHumidity(temperatureHandler_t self){
-	return self->humidity();
+	return self->humidity;
 }

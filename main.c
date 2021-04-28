@@ -20,8 +20,6 @@
 #include <hih8120.h>
 #include <tsl2591.h>
 
-#include <TemperatureHandler.h>
-
 // Needed for LoRaWAN
 #include <lora_driver.h>
 #include <status_leds.h>
@@ -182,85 +180,11 @@ void initialiseSystem()
 }
 
 
-
-void tsl2591Callback(tsl2591_returnCode_t rc)
-{
-	uint16_t _tmp;
-	float _lux;
-	switch (rc)
-	{
-		case TSL2591_DATA_READY:
-		if ( TSL2591_OK == (rc = tsl2591_getFullSpectrumRaw(&_tmp)) )
-		{
-			printf("\nFull Raw:%04X\n", _tmp);
-		}
-		else if( TSL2591_OVERFLOW == rc )
-		{
-			printf("\nFull spectrum overflow - change gain and integration time\n");
-		}
-		
-		if ( TSL2591_OK == (rc = tsl259_getVisibleRaw(&_tmp)) )
-		{
-			printf("Visible Raw:%04X\n", _tmp);
-		}
-		else if( TSL2591_OVERFLOW == rc )
-		{
-			printf("Visible overflow - change gain and integration time\n");
-		}
-		
-		if ( TSL2591_OK == (rc = tsl2591_getInfraredRaw(&_tmp)) )
-		{
-			printf("Infrared Raw:%04X\n", _tmp);
-		}
-		else if( TSL2591_OVERFLOW == rc )
-		{
-			printf("Infrared overflow - change gain and integration time\n");
-		}
-		
-		if ( TSL2591_OK == (rc = tsl2591_getLux(&_lux)) )
-		{
-			printf("Lux: %5.4f\n", _lux);
-		}
-		else if( TSL2591_OVERFLOW == rc )
-		{
-			printf("Lux overflow - change gain and integration time\n");
-		}
-		break;
-		
-		case TSL2591_OK:
-		// Last command performed successful
-		break;
-		
-		case TSL2591_DEV_ID_READY:
-		// Dev ID now fetched
-		break;
-		
-		default:
-		break;
-	}
-}
-
-void initliazeLight()
-{
-	if ( TSL2591_OK == tsl2591_initialise(tsl2591Callback) )
-	{
-		// Driver initilised OK
-		// Always check what tsl2591_initialise() returns
-		printf("Light initialized\n");
-	}
-}
-
-void initialiseSensors(){
-	initliazeLight();
-	initializedTemp();
-}
-
 /*-----------------------------------------------------------*/
 int main(void)
 {
 	initialiseSystem(); // Must be done as the very first thing!!
 	printf("Program Started!!\n");
-	initialiseSensors();
 	vTaskStartScheduler(); // Initialise and run the freeRTOS scheduler. Execution should never return from here.
 
 	/* Replace with your application code */
