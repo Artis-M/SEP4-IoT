@@ -12,6 +12,10 @@
 #include <lora_driver.h>
 #include <status_leds.h>
 
+#include "CO2Handler.h"
+#include "TemperatureHandler.h"
+#include "lightReader.h"
+
 // Parameters for OTAA join - You have got these in a mail from IHA
 #define LORA_appEUI "689DF9DF68156742"
 #define LORA_appKEY "B09F779D3DF66B89B996955E3B4ED977"
@@ -22,8 +26,9 @@ void lora_handler_task( void *pvParameters );
 
 static lora_driver_payload_t _uplink_payload;
 
-//temperatureHandler temperatureHandler_create();
-//lightReader initialiseLightDriver();
+temperatureHandler_t temperatureHandler;
+lightReader_t lightReader;
+CO2Handler_t CO2Handler;
 
 void lora_handler_initialise(UBaseType_t lora_handler_task_priority)
 {
@@ -108,7 +113,11 @@ static void _lora_setup(void)
 		}
 	}
 }
-
+void createSensors(){
+	temperatureHandler = temperatureHandler_create();
+	lightReader = initialiseLightDriver();
+	CO2Handler = co2_create();
+}
 /*-----------------------------------------------------------*/
 void lora_handler_task( void *pvParameters )
 {
@@ -144,10 +153,11 @@ void lora_handler_task( void *pvParameters )
 		
 		uint16_t plant = 3;
 		uint16_t garden = 33;
-		uint16_t hum = 2;
-		int16_t temp = 36.6 * 100;
-		uint16_t lux = 1024;
-		uint16_t co2_ppm = 900; // Dummy CO2
+		uint16_t hum = getHumidity(temperatureHandler);
+		int16_t temp = getTemperature(temperatureHandler);
+		getLightMeasurements(lightReader);
+		uint16_t lux = getLight(lightReader);
+		uint16_t co2_ppm = getCO2(CO2Handler); // Dummy CO2
 
 		_uplink_payload.bytes[0] = hum >> 8;
 		_uplink_payload.bytes[1] = hum & 0xFF;
