@@ -10,7 +10,7 @@
 
 typedef struct temperatureHandler{
 	int16_t temperature;
-	int16_t humidity;
+	uint16_t humidity;
 } temperatureHandler;
 
 temperatureHandler_t temperatureHandler_create(){
@@ -53,6 +53,6 @@ void getTemperatureMesurements(temperatureHandler_t self){
 int16_t getTemperature(temperatureHandler_t self){
 			return self->temperature;
 }
-int16_t getHumidity(temperatureHandler_t self){
+uint16_t getHumidity(temperatureHandler_t self){
 	return self->humidity();
 }
