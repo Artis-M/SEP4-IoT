@@ -14,7 +14,7 @@
 #include "task.h"
 #include "event_groups.h"
 
-//typedef struct  lightReader* lightReader_t;
+typedef struct lightReader* lightReader_t;
 
 lightReader_t initialiseLightDriver();
 void destroy();

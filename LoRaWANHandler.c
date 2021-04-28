@@ -22,6 +22,8 @@ void lora_handler_task( void *pvParameters );
 
 static lora_driver_payload_t _uplink_payload;
 
+temperatureHandler temperatureHandler_create();
+
 void lora_handler_initialise(UBaseType_t lora_handler_task_priority)
 {
 printf("SETTING UP LORAWAN");
@@ -109,9 +111,6 @@ static void _lora_setup(void)
 /*-----------------------------------------------------------*/
 void lora_handler_task( void *pvParameters )
 {
-	printf("aaaaaaaaaaah");
-
-
 	// Hardware reset of LoRaWAN transceiver
 	lora_driver_resetRn2483(1);
 	vTaskDelay(2);
@@ -135,10 +134,11 @@ void lora_handler_task( void *pvParameters )
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 		printf("Messuring brrrrrrrrrrr");
-
-		// Some dummy payload
-		uint16_t hum = 12345; // Dummy humidity
-		int16_t temp = 675; // Dummy temp
+		getTemperatureMesurements(temperatureHandler);
+		
+		uint16_t hum = getHumidity(temperatureHandler);
+		int16_t temp = getTemperature(temperatureHandler);
+		
 		uint16_t co2_ppm = 1050; // Dummy CO2
 
 		_uplink_payload.bytes[0] = hum >> 8;

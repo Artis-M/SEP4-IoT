@@ -13,11 +13,10 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-typedef struct temperatureHandler* TemperatureHandler_t;
+typedef struct temperatureHandler* temperatureHandler_t;
 
-temperatureHandler _create(UBaseType_t priority, UBaseType_t stack, EventGroupHandle_t startMeasureEventGroup, EventBits_t startMeasureBit,
-EventGroupHandle_t readyEventGroup, EventBits_t readyBit);
-void initialiseTempDriver();
-void getMeasurements();
-float getTemperature();
-float getHumidity();
+temperatureHandler_t temperatureHandler_create();
+temperatureHandler_t tempHander_destroy(temperatureHandler_t self);
+void getTemperatureMesurements(temperatureHandler_t self);
+int16_t  getTemperature(temperatureHandler_t self);
+int16_t  getHumidity(temperatureHandler_t self);
