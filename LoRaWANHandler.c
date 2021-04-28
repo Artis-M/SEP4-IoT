@@ -135,14 +135,17 @@ void lora_handler_task( void *pvParameters )
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 		printf("Messuring brrrrrrrrrrr");
-		getTemperatureMesurements(temperatureHandler);
-		getLightMeasurements(lightReader);
+		//getTemperatureMesurements(temperatureHandler);
+		//getLightMeasurements(lightReader);
 		
-		uint16_t hum = getHumidity(temperatureHandler);
-		int16_t temp = getTemperature(temperatureHandler);
-		uint16_t lux = getLight(lightReader);
+		//uint16_t hum = getHumidity(temperatureHandler);
+		//int16_t temp = getTemperature(temperatureHandler);
+		//uint16_t lux = getLight(lightReader);
 		
-		uint16_t co2_ppm = 1050; // Dummy CO2
+		uint16_t hum = 2;
+		int16_t temp = 36.6;
+		uint16_t lux = 1024;
+		uint16_t co2_ppm = 900; // Dummy CO2
 
 		_uplink_payload.bytes[0] = hum >> 8;
 		_uplink_payload.bytes[1] = hum & 0xFF;
