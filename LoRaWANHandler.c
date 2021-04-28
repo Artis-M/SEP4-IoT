@@ -22,8 +22,8 @@ void lora_handler_task( void *pvParameters );
 
 static lora_driver_payload_t _uplink_payload;
 
-temperatureHandler temperatureHandler_create();
-lightReader initialiseLightDriver();
+//temperatureHandler temperatureHandler_create();
+//lightReader initialiseLightDriver();
 
 void lora_handler_initialise(UBaseType_t lora_handler_task_priority)
 {
@@ -123,7 +123,7 @@ void lora_handler_task( void *pvParameters )
 
 	_lora_setup();
 
-	_uplink_payload.len = 6;
+	_uplink_payload.len = 12;
 	_uplink_payload.portNo = 2;
 
 	TickType_t xLastWakeTime;
@@ -142,8 +142,10 @@ void lora_handler_task( void *pvParameters )
 		//int16_t temp = getTemperature(temperatureHandler);
 		//uint16_t lux = getLight(lightReader);
 		
+		uint16_t plant = 3;
+		uint16_t garden = 33;
 		uint16_t hum = 2;
-		int16_t temp = 36.6;
+		int16_t temp = 36.6 * 100;
 		uint16_t lux = 1024;
 		uint16_t co2_ppm = 900; // Dummy CO2
 
@@ -155,6 +157,11 @@ void lora_handler_task( void *pvParameters )
 		_uplink_payload.bytes[5] = co2_ppm & 0xFF;
 		_uplink_payload.bytes[6] = lux >> 8;
 		_uplink_payload.bytes[7] = lux & 0xFF;
+		_uplink_payload.bytes[8] = plant >> 8;
+		_uplink_payload.bytes[9] = plant & 0xFF;
+		_uplink_payload.bytes[10] = garden >> 8;
+		_uplink_payload.bytes[11] = garden & 0xFF;
+		
 
 		status_leds_shortPuls(led_ST4);  // OPTIONAL
 		printf("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));

@@ -1,4 +1,4 @@
-
+/*
 /*
  * CO2Handler.c
  *
@@ -8,7 +8,7 @@
 #include <mh_z19.h>
 #include <stdio.h>
 
-mh_z19_injectCallBack(myCo2CallBack);
+/*
 
 typedef struct CO2Handler
 {
@@ -19,6 +19,7 @@ mh_z19_returnCode_t rc;
 
 void initialiseCO2Sensor(){
 	mh_z19_initialise(ser_USART3); 
+	mh_z19_injectCallBack(myCo2CallBack);
 }
 
 void getCO2Mesurement(CO2Handler self){
@@ -37,4 +38,4 @@ void myCo2CallBack(uint16_t ppm)
 
 uint16_t getCO2(CO2Handler self){
 	return self->ppm;
-}
+}*/
