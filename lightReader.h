@@ -17,10 +17,10 @@
 typedef struct lightReader* lightReader_t;
 
 lightReader_t initialiseLightDriver(); //remember arguments here
-void destroy(lightReader_t self);
+void light_destroy(lightReader_t self);
 uint16_t getLight(lightReader_t self);
-void getMeasurements(lightReader_t self);
-void execute(lightReader_t self);
+void getLightMeasurements();
+
 
 
 

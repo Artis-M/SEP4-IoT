@@ -15,28 +15,28 @@
 #include "event_groups.h"
 #include "task.h"
 
-//static EventGroupHandle_t _startMeasureEventGroup;
-//static EventBits_t _startMeasureBit;
-
-//static EventGroupHandle_t _readyMeasuringEventGroup;
-//static EventBits_t _readyBit;
-
-typedef struct lightReader_t lightReader;
-
 typedef struct lightReader 
 {
-	
-};
+	uint16_t lux;
+}lightReader;
 
-void initialiseLightDriver(){
-	if ( TSL2591_OK == tsl2591_initialise(tsl2591Callback( )
+lightReader_t initialiseLightDriver(){
+	lightReader_t new_reader = calloc(1, sizeof(lightReader));
+	
+	if(new_reader == NULL) return NULL;
+	
+	new_reader->lux = 0;
+	
+	if ( TSL2591_OK == tsl2591_initialise(tsl2591Callback))
 	{
 		puts("Light driver initialized");
 		puts("Return code is: %s", tsl2591_initialise());
 	}
+	
+	return new_reader;
 }
 
-void tsl2591Callback(tsl2591_returnCode_t rc)
+void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
 {
 	uint16_t _tmp;
 	float _lux;
@@ -73,6 +73,8 @@ void tsl2591Callback(tsl2591_returnCode_t rc)
 		if ( TSL2591_OK == (rc = tsl2591_getLux(&_lux)) )
 		{
 			printf("Lux: %5.4f\n", _lux);
+			self->lux = _lux;
+			
 		}
 		else if( TSL2591_OVERFLOW == rc )
 		{
@@ -93,7 +95,7 @@ void tsl2591Callback(tsl2591_returnCode_t rc)
 	}
 }
 
-void getMeasurements(){
+void getLightMeasurements(){
 	
 	if ( TSL2591_OK == tsl2591_enable() )
 	{
@@ -118,7 +120,7 @@ void getMeasurements(){
 	}
 }
 
-uint16_t getLight(){
-	return tsl2591_getLux();
+uint16_t getLight(lightReader_t self){
+	return self->lux;
 }
 
