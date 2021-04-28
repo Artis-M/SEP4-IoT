@@ -33,6 +33,7 @@ temperatureHandler_t temperatureHandler_create(){
 		printf("Temp sensor initialized");
 		printf("_______________________");
 	}
+	printf("Temperature sensor init?");
 	return _new_reader;
 }
 void getTemperatureMesurements(temperatureHandler_t self){
@@ -62,8 +63,12 @@ void getTemperatureMesurements(temperatureHandler_t self){
 	
 }
 int16_t getTemperature(temperatureHandler_t self){
+		printf("%d", self->temperature);
 			return self->temperature;
+		
 }
 uint16_t getHumidity(temperatureHandler_t self){
+	printf("%d", self->humidity);
 	return self->humidity;
+	
 }

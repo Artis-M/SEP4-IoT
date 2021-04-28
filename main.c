@@ -87,57 +87,57 @@ void task1( void *pvParameters )
 		float light = 0;
 		//char *s;
 		
-		if ( HIH8120_OK != hih8120_wakeup() )
-		{
-			// Something went wrong
-			// Investigate the return code further
-			puts("Task1 failed to work!");
-		}
+// 		if ( HIH8120_OK != hih8120_wakeup() )
+// 		{
+// 			// Something went wrong
+// 			// Investigate the return code further
+// 			puts("Task1 failed to work!");
+// 		}
 		
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 
-		
-		if ( HIH8120_OK !=  hih8120_measure() )
-		{
-			// Something went wrong
-			// Investigate the return code further
-			printf("%d \n", initializedTemp);
-			puts("Task1 failed to work again");
-		}
-		
-		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-
-		if ( TSL2591_OK == tsl2591_enable() )
-		{
-			puts("Light enabled");
-			// The power up command is now send to the sensor - it can be powered down with a call to tsl2591_disable()
-		}
-		
-		if ( TSL2591_OK != tsl2591_fetchData() )
-		{
-			puts("Light not fetched");
-			// Something went wrong
-			// Investigate the return code further
-		}
-		else
-		{
-				
-			tsl2591_getLux(&light);
-			printf("The Light Data Received from the sensor is : %2.2f \n", light);
-		}
-
-	    //xTaskDelayUntil( &xLastWakeTime, xFrequency );
-		//humidity = hih8120_getHumidity();
-		//xTaskDelayUntil( &xLastWakeTime, xFrequency );
-		//temperature = hih8120_getTemperature();
-
-		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-		printf("Humidity : %2.2f \n", humidity);
-		printf("Temperature : %2.2f \n", temperature);
-		puts("Task1"); // stdio functions are not reentrant - Should normally be protected by MUTEX
-		//PORTA ^= _BV(PA0);
-		
-	}
+// 		
+// 		if ( HIH8120_OK !=  hih8120_measure() )
+// 		{
+// 			// Something went wrong
+// 			// Investigate the return code further
+// 			printf("%d \n", initializedTemp);
+// 			puts("Task1 failed to work again");
+// 		}
+// 		
+// 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
+// 
+// 		if ( TSL2591_OK == tsl2591_enable() )
+// 		{
+// 			puts("Light enabled");
+// 			// The power up command is now send to the sensor - it can be powered down with a call to tsl2591_disable()
+// 		}
+// 		
+// 		if ( TSL2591_OK != tsl2591_fetchData() )
+// 		{
+// 			puts("Light not fetched");
+// 			// Something went wrong
+// 			// Investigate the return code further
+// 		}
+// 		else
+// 		{
+// 				
+// 			tsl2591_getLux(&light);
+// 			printf("The Light Data Received from the sensor is : %2.2f \n", light);
+// 		}
+// 
+// 	    //xTaskDelayUntil( &xLastWakeTime, xFrequency );
+// 		//humidity = hih8120_getHumidity();
+// 		//xTaskDelayUntil( &xLastWakeTime, xFrequency );
+// 		//temperature = hih8120_getTemperature();
+// 
+// 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
+// 		printf("Humidity : %2.2f \n", humidity);
+// 		printf("Temperature : %2.2f \n", temperature);
+// 		puts("Task1"); // stdio functions are not reentrant - Should normally be protected by MUTEX
+// 		//PORTA ^= _BV(PA0);
+// 		
+// 	}
 }
 
 /*-----------------------------------------------------------*/
