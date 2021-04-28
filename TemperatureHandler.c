@@ -59,16 +59,17 @@ void getTemperatureMesurements(temperatureHandler_t self){
 	}
 	
 	self->temperature = hih8120_getTemperature();
+	xTaskDelayUntil( &xLastWakeTime, xFrequency );
 	self->humidity = hih8120_getHumidity();
 	
 }
 int16_t getTemperature(temperatureHandler_t self){
-		printf("%d", self->temperature);
+		printf("Temperature: %d", self->temperature);
 			return self->temperature;
 		
 }
 uint16_t getHumidity(temperatureHandler_t self){
-	printf("%d", self->humidity);
+	printf("Humidiyt: %d", self->humidity);
 	return self->humidity;
 	
 }

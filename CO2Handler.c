@@ -43,7 +43,7 @@ void getCO2Mesurement(CO2Handler_t self){
 
 uint16_t myCo2CallBack(uint16_t ppm)
 {
-			printf("%d", ppm);
+			printf("CO2: %d", ppm);
 	return ppm;
 
 }
