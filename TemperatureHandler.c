@@ -95,7 +95,7 @@ void temperature_handler_task( void *pvParameters ){
 			puts("Temp task failed to work!");
 		}
 		
-		const TickType_t xFrequency2 = pdMS_TO_TICKS(1000UL);
+			xTaskDelayUntil( &xLastWakeTime, xFrequency2 );
 			if ( HIH8120_OK !=  hih8120_measure() )
 			{
 				// Something went wrong
