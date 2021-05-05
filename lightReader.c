@@ -56,7 +56,7 @@ void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
 		case TSL2591_DATA_READY:
 		if ( TSL2591_OK == (rc = tsl2591_getFullSpectrumRaw(&_tmp)) )
 		{
-			printf("\nFull Raw:%04X\n", _tmp);
+			//printf("\nFull Raw:%04X\n", _tmp);
 		}
 		else if( TSL2591_OVERFLOW == rc )
 		{
@@ -65,7 +65,7 @@ void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
 		
 		if ( TSL2591_OK == (rc = tsl259_getVisibleRaw(&_tmp)) )
 		{
-			printf("Visible Raw:%04X\n", _tmp);
+			//printf("Visible Raw:%04X\n", _tmp);
 		}
 		else if( TSL2591_OVERFLOW == rc )
 		{
@@ -74,7 +74,7 @@ void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
 		
 		if ( TSL2591_OK == (rc = tsl2591_getInfraredRaw(&_tmp)) )
 		{
-			printf("Infrared Raw:%04X\n", _tmp);
+			//printf("Infrared Raw:%04X\n", _tmp);
 		}
 		else if( TSL2591_OVERFLOW == rc )
 		{
@@ -83,7 +83,7 @@ void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
 		
 		if ( TSL2591_OK == (rc = tsl2591_getLux(&_lux)) )
 		{
-			printf("Lux: %5.4f\n", _lux);
+			//printf("Lux: %5.4f\n", _lux);
 			self->lux = _lux;
 			
 		}
