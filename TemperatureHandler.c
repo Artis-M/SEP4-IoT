@@ -20,6 +20,24 @@ typedef struct temperatureHandler{
 	uint16_t humidity;
 } temperatureHandler;
 
+
+
+void temperature_handler_initialise(UBaseType_t temperatureHandler_priority)
+{
+	printf("SETTING UP LORAWAN");
+	xTaskCreate(
+	lora_handler_task
+	,  "TemperatureTask"
+	,  configMINIMAL_STACK_SIZE+200
+	,  NULL
+	,  temperatureHandler_priority
+	,  NULL );
+}
+
+
+
+
+
 temperatureHandler_t temperatureHandler_create(){
 	temperatureHandler_t _new_reader = calloc(1, sizeof(temperatureHandler));
 		if (_new_reader == NULL){
@@ -27,13 +45,7 @@ temperatureHandler_t temperatureHandler_create(){
 		}
 	_new_reader->temperature = 0;
 	_new_reader->humidity = 0;
-	
-	if ( HIH8120_OK == hih8120_initialise() )
-	{
-		printf("Temp sensor initialized");
-		printf("_______________________");
-	}
-	printf("Temperature sensor init?");
+	temperature_handler_initialise();
 	return _new_reader;
 }
 void getTemperatureMesurements(temperatureHandler_t self){
@@ -69,7 +81,28 @@ int16_t getTemperature(temperatureHandler_t self){
 		
 }
 uint16_t getHumidity(temperatureHandler_t self){
-	printf("Humidiyt: %d", self->humidity);
+	printf("Humidity: %d", self->humidity);
 	return self->humidity;
 	
+}
+
+
+void temperature_handler_task( void *pvParameters ){
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = pdMS_TO_TICKS(3000UL);
+	xLastWakeTime = xTaskGetTickCount();
+	
+	if ( HIH8120_OK == hih8120_initialise() )
+	{
+		printf("Temp sensor initialized");
+		printf("_______________________");
+	}
+	printf("Temperature sensor init?");
+	
+	for(;;)
+	{
+		xTaskDelayUntil( &xLastWakeTime, xFrequency );
+		getTemperatureMesurements();
+		printf("Got temperature measurements");
+	}
 }
