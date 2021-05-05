@@ -151,6 +151,8 @@ void lora_handler_task( void *pvParameters )
 		//int16_t temp = getTemperature(temperatureHandler);
 		//uint16_t lux = getLight(lightReader);
 		
+		getTemperatureMesurements(temperatureHandler);
+		
 		uint16_t plant = 3;
 		uint16_t garden = 33;
 		uint16_t hum = getHumidity(temperatureHandler);

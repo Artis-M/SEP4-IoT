@@ -45,6 +45,14 @@ temperatureHandler_t temperatureHandler_create(){
 		}
 	_new_reader->temperature = 0;
 	_new_reader->humidity = 0;
+	
+	if ( HIH8120_OK == hih8120_initialise() )
+	{
+		printf("Temp sensor initialized");
+		printf("_______________________");
+	}
+	printf("Temperature sensor init?");
+	
 	temperature_handler_initialise(3);
 	return _new_reader;
 }
@@ -77,12 +85,7 @@ void temperature_handler_task( void *pvParameters ){
 	const TickType_t xFrequency2 = pdMS_TO_TICKS(1000UL);
 	xLastWakeTime = xTaskGetTickCount();
 	
-	if ( HIH8120_OK == hih8120_initialise() )
-	{
-		printf("Temp sensor initialized");
-		printf("_______________________");
-	}
-	printf("Temperature sensor init?");
+	
 	
 	for(;;)
 	{

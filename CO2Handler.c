@@ -10,6 +10,7 @@
 #include "CO2Handler.h"
 
 uint16_t ppm;
+uint16_t temp_ppm;
 mh_z19_returnCode_t rc;
 uint16_t myCo2CallBack(uint16_t ppm);
 
@@ -51,8 +52,10 @@ void getCO2Mesurement(CO2Handler_t self){
 
 uint16_t myCo2CallBack(uint16_t ppm)
 {
-			printf("CO2: %d", ppm);
-	return ppm;
+	printf("____________________________________________________________");
+	printf("CO2: %d", ppm);
+	temp_ppm = ppm;
+	return temp_ppm;
 
 }
 
