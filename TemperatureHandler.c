@@ -28,7 +28,7 @@ void temperature_handler_initialise(UBaseType_t temperatureHandler_priority)
 	xTaskCreate(
 	temperature_handler_task
 	,  "TemperatureTask"
-	,  configMINIMAL_STACK_SIZE+200
+	,  configMINIMAL_STACK_SIZE+100
 	,  NULL
 	,  temperatureHandler_priority
 	,  NULL );
@@ -45,7 +45,7 @@ temperatureHandler_t temperatureHandler_create(){
 		}
 	_new_reader->temperature = 0;
 	_new_reader->humidity = 0;
-	temperature_handler_initialise(2);
+	temperature_handler_initialise(3);
 	return _new_reader;
 }
 void getTemperatureMesurements(temperatureHandler_t self){
@@ -56,7 +56,7 @@ void getTemperatureMesurements(temperatureHandler_t self){
 	self->temperature = hih8120_getTemperature();
 	xTaskDelayUntil( &xLastWakeTime, xFrequency );
 	self->humidity = hih8120_getHumidity();
-	printf("Getting temperature measurements from function.")
+	printf("Getting temperature measurements from function.");
 	
 }
 int16_t getTemperature(temperatureHandler_t self){
@@ -74,6 +74,7 @@ uint16_t getHumidity(temperatureHandler_t self){
 void temperature_handler_task( void *pvParameters ){
 	TickType_t xLastWakeTime;
 	const TickType_t xFrequency = pdMS_TO_TICKS(3000UL);
+	const TickType_t xFrequency2 = pdMS_TO_TICKS(1000UL);
 	xLastWakeTime = xTaskGetTickCount();
 	
 	if ( HIH8120_OK == hih8120_initialise() )
@@ -86,6 +87,7 @@ void temperature_handler_task( void *pvParameters ){
 	for(;;)
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
+		
 		if ( HIH8120_OK != hih8120_wakeup() )
 		{
 			// Something went wrong
@@ -93,6 +95,7 @@ void temperature_handler_task( void *pvParameters ){
 			puts("Temp task failed to work!");
 		}
 		
+		const TickType_t xFrequency2 = pdMS_TO_TICKS(1000UL);
 			if ( HIH8120_OK !=  hih8120_measure() )
 			{
 				// Something went wrong
