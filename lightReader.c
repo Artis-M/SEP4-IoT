@@ -39,6 +39,14 @@ lightReader_t initialiseLightDriver(){
 	return new_reader;
 }
 
+void light_executeTask(lightReader_t self)
+{
+	for (;;)
+	{
+		getLightMeasurements(self);
+	}
+}
+
 void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
 {
 	uint16_t _tmp;

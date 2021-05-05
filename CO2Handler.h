@@ -17,6 +17,7 @@
 typedef struct CO2Handler* CO2Handler_t;
 
 CO2Handler_t co2_create();
-void initialiseCO2Sensor();
+void initialiseCO2Sensor(); //why does this exist
+void co2_executeTask(CO2Handler_t self);
 void getCO2Mesurement(CO2Handler_t self);
 uint16_t getCO2(CO2Handler_t self);
