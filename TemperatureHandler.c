@@ -20,7 +20,7 @@ typedef struct temperatureHandler{
 	uint16_t humidity;
 } temperatureHandler;
 
-
+void temperature_handler_task( void *pvParameters );
 
 void temperature_handler_initialise(UBaseType_t temperatureHandler_priority)
 {
@@ -52,27 +52,11 @@ void getTemperatureMesurements(temperatureHandler_t self){
 	
 	TickType_t xLastWakeTime;
 	const TickType_t xFrequency = 500/portTICK_PERIOD_MS; // 500 ms
-	
-	if ( HIH8120_OK != hih8120_wakeup() )
-	{
-		// Something went wrong
-		// Investigate the return code further
-		puts("Task1 failed to work!");
-	}
-	
 	xTaskDelayUntil( &xLastWakeTime, xFrequency );
-
-	
-	if ( HIH8120_OK !=  hih8120_measure() )
-	{
-		// Something went wrong
-		// Investigate the return code further
-		puts("Task1 failed to work again");
-	}
-	
 	self->temperature = hih8120_getTemperature();
 	xTaskDelayUntil( &xLastWakeTime, xFrequency );
 	self->humidity = hih8120_getHumidity();
+	printf("Getting temperature measurements from function.")
 	
 }
 int16_t getTemperature(temperatureHandler_t self){
@@ -102,7 +86,20 @@ void temperature_handler_task( void *pvParameters ){
 	for(;;)
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-		getTemperatureMesurements();
+		if ( HIH8120_OK != hih8120_wakeup() )
+		{
+			// Something went wrong
+			// Investigate the return code further
+			puts("Temp task failed to work!");
+		}
+		
+			if ( HIH8120_OK !=  hih8120_measure() )
+			{
+				// Something went wrong
+				// Investigate the return code further
+				puts("Temp task failed to work again!");
+			}
+		
 		printf("Got temperature measurements");
 	}
 }
