@@ -26,7 +26,7 @@ void temperature_handler_initialise(UBaseType_t temperatureHandler_priority)
 {
 	printf("SETTING UP LORAWAN");
 	xTaskCreate(
-	lora_handler_task
+	temperature_handler_task
 	,  "TemperatureTask"
 	,  configMINIMAL_STACK_SIZE+200
 	,  NULL
@@ -45,7 +45,7 @@ temperatureHandler_t temperatureHandler_create(){
 		}
 	_new_reader->temperature = 0;
 	_new_reader->humidity = 0;
-	temperature_handler_initialise();
+	temperature_handler_initialise(2);
 	return _new_reader;
 }
 void getTemperatureMesurements(temperatureHandler_t self){
