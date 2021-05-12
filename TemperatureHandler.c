@@ -15,6 +15,10 @@
 #include <stdio.h>
 #include "TemperatureHandler.h"
 
+	int measurementCount = 1;
+	int16_t averageTemp;
+	uint16_t averageHumidity;
+	
 typedef struct temperatureHandler{
 	int16_t temperature;
 	uint16_t humidity;
@@ -58,12 +62,16 @@ temperatureHandler_t temperatureHandler_create(){
 }
 void getTemperatureMesurements(temperatureHandler_t self){
 	
-	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = 500/portTICK_PERIOD_MS; // 500 ms
-	xTaskDelayUntil( &xLastWakeTime, xFrequency );
-	self->temperature = hih8120_getTemperature();
-	xTaskDelayUntil( &xLastWakeTime, xFrequency );
-	self->humidity = hih8120_getHumidity();
+	//TickType_t xLastWakeTime;
+	//const TickType_t xFrequency = 200/portTICK_PERIOD_MS; // 200 ms
+	//xTaskDelayUntil( &xLastWakeTime, xFrequency );
+	//self->temperature = hih8120_getTemperature();
+	//xTaskDelayUntil( &xLastWakeTime, xFrequency );
+	//self->humidity = hih8120_getHumidity();
+	
+		self->temperature = averageTemp / measurementCount;
+		self->humidity = averageHumidity / measurementCount;
+		
 	printf("Getting temperature measurements from function.");
 	
 }
@@ -81,12 +89,9 @@ uint16_t getHumidity(temperatureHandler_t self){
 
 void temperature_handler_task( void *pvParameters ){
 	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = pdMS_TO_TICKS(3000UL);
-	const TickType_t xFrequency2 = pdMS_TO_TICKS(1000UL);
+	const TickType_t xFrequency = pdMS_TO_TICKS(15000UL);
+	const TickType_t xFrequency2 = pdMS_TO_TICKS(100UL);
 	xLastWakeTime = xTaskGetTickCount();
-	
-	
-	
 	for(;;)
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
@@ -105,7 +110,18 @@ void temperature_handler_task( void *pvParameters ){
 				// Investigate the return code further
 				puts("Temp task failed to work again!");
 			}
-		
+			
+		measurementCount++;
+		if(measurementCount <= 20){
+			averageTemp += hih8120_getTemperature();
+			averageHumidity += hih8120_getHumidity();
+		}
+		else{
+			measurementCount = 1;
+				averageTemp = hih8120_getTemperature();
+				averageHumidity = hih8120_getHumidity();
+		}
+		printf("Measurement number: %d", measurementCount);
 		printf("Got temperature measurements");
 	}
 }
