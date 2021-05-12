@@ -2,7 +2,7 @@
  * DownLinkHandler.h
  *
  * Created: 12/05/2021 10:23:21
- *  Author: Cata
+ *  Author: 
  */ 
 
 #pragma once
@@ -16,5 +16,5 @@
 #include <status_leds.h>
 
 void DownLinkHandler_Create();
-void DownLinkHandler_task();
+void DownLinkHandler_StartTask();
 //to add more if needed
