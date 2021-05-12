@@ -11,7 +11,7 @@
 
 uint16_t ppm;
 mh_z19_returnCode_t rc;
-uint16_t myCo2CallBack(uint16_t ppmCall);
+void myCo2CallBack(uint16_t ppmCall);
 
 typedef struct CO2Handler
 {
@@ -50,12 +50,11 @@ void getCO2Mesurement(CO2Handler_t self){
 	self->co2ppm = ppm;
 }
 
-uint16_t myCo2CallBack(uint16_t ppmCall)
+void myCo2CallBack(uint16_t ppmCall)
 {
 	printf("____________________________________________________________ \n");
 	printf("CO2: %d \n", ppm);
 	ppm = ppmCall;
-	return ppm;
 }
 
 uint16_t getCO2(CO2Handler_t self){
