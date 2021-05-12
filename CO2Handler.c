@@ -7,8 +7,8 @@
  */ 
 #include <mh_z19.h>
 #include <stdio.h>
+#include <ATMEGA_FreeRTOS.h>
 #include "CO2Handler.h"
-#include <EEPROM.h>
 
 uint16_t ppm;
 mh_z19_returnCode_t rc;
@@ -18,6 +18,7 @@ mh_z19_returnCode_t rc;
 	int16_t averageCO2;
 
 void myCo2CallBack(uint16_t ppmCall);
+void co2_handler_task(void *pvParameters);
 
 typedef struct CO2Handler
 {
@@ -101,7 +102,7 @@ void co2_handler_task(void *pvParameters){
 			}
 			else{
 				co2MeasurementCount = 1;
-				averageCO2 = ppm();
+				averageCO2 = ppm;
 			}
 			printf("Measurement number: %d", co2MeasurementCount);
 	}

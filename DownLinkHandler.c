@@ -11,7 +11,7 @@
 #include "DownLinkHandler.h"
 //#include "Configuration.h"
 #include <stdlib.h>
-#include <avr/include/avr/eeprom.h>//persistence
+#include <avr/eeprom.h>//persistence
 #include <lora_driver.h>
 /*Leds*/
 //#include <iled.h>
@@ -30,7 +30,7 @@ void lora_DownLinkHandler_Create(UBaseType_t priority, UBaseType_t stack, Messag
 {
 	xTaskCreate(
 	lora_DownLinkHandler_StartTask
-	,  (const portCHAR *)"LRDHHand" //don't know what type the constant should be
+	,  "LRDHHand" //don't know what type the constant should be
 	,  stack+200
 	,  (void*)messageBuffer
 	,  priority

@@ -155,6 +155,12 @@
     <Compile Include="CO2Handler.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="DownLinkHandler.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DownLinkHandler.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="drivers\display_7seg.h">
       <SubType>compile</SubType>
     </Compile>
@@ -302,6 +308,12 @@
     <Compile Include="TemperatureHandler.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="UpLinkHandler.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="UpLinkHandler.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="drivers\" />
@@ -373,9 +385,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="lightReader.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LoRaWANHandler.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.c">
