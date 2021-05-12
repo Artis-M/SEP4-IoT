@@ -9,6 +9,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include "DownLinkHandler.h"
+#include "Servo.h"
 //#include "Configuration.h"
 #include <stdlib.h>
 #include <avr/eeprom.h>//persistence
@@ -49,7 +50,12 @@ void lora_DownLinkHandler_Task(MessageBufferHandle_t messageBuffer)
 		//Here we do what we want with the information		
 		if((_downlink_Payload.bytes[0] << 8) + _downlink_Payload.bytes[1] == 0)
 		{
-			//need servo
+			if(_downlink_Payload.bytes[2] + _downlink_Payload.bytes[3] == 1)
+			servo_setPosition(0, 100); //fully open to the right
+			else if(_downlink_Payload.bytes[2] + _downlink_Payload.bytes[3] == 0)
+			{
+				servo_setPosition(0, 0); //closed
+			}
 		}
 		else
 		{

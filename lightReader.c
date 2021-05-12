@@ -16,6 +16,9 @@
 #include "task.h"
 #include "lightReader.h"
 
+int lightMeasurementCount = 1;
+uint16_t averageLight;
+
 void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self);
 
 typedef struct lightReader 
@@ -45,6 +48,18 @@ void light_executeTask(lightReader_t self)
 	{
 		getLightMeasurements(self);
 	}
+}
+
+void light_initializeTask(UBaseType_t lightPriority, lightReader_t self)
+{
+	xTaskCreate(
+	light_handler_task(self)
+	,  "lightTask"
+	,  configMINIMAL_STACK_SIZE+100
+	,  (void*) self
+	,  lightPriority
+	,  NULL
+	);
 }
 
 void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
@@ -138,5 +153,30 @@ void getLightMeasurements(lightReader_t self){
 
 uint16_t getLight(lightReader_t self){
 	return self->lux;
+}
+
+void light_handler_task(lightReader_t self)
+{
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = pdMS_TO_TICKS(15000UL);
+	xLastWakeTime = xTaskGetTickCount();
+	for(;;)
+	{
+		xTaskDelayUntil( &xLastWakeTime, xFrequency );
+		
+		lightMeasurementCount++;
+		if(lightMeasurementCount <= 20)
+		{
+			averageLight +=self->lux;
+		}
+		else
+		{
+			lightMeasurementCount = 1;
+			averageLight = self->lux;
+		}
+		printf("Measurement number of light: %d", averageLight/lightMeasurementCount);
+		printf("Measurement number of light: %d", averageLight);
+	}
+
 }
 

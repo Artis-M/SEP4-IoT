@@ -21,6 +21,7 @@ void light_executeTask(lightReader_t self);
 void light_destroy(lightReader_t self);
 uint16_t getLight(lightReader_t self);
 void getLightMeasurements(lightReader_t self);
+void light_initializeTask(UBaseType_t lightPriority, lightReader_t self);
 
 
 

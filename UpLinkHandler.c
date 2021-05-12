@@ -116,6 +116,7 @@ static void _lora_setup(void)
 void createSensors(){
 	temperatureHandler = temperatureHandler_create();
 	lightReader = initialiseLightDriver();
+	light_initializeTask(3, lightReader);
 	CO2Handler = co2_create();
 }
 /*-----------------------------------------------------------*/
