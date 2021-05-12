@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include "TemperatureHandler.h"
 
-	int measurementCount = 1;
+	int tempMeasurementCount = 1;
 	int16_t averageTemp;
 	uint16_t averageHumidity;
 	
@@ -28,7 +28,6 @@ void temperature_handler_task( void *pvParameters );
 
 void temperature_handler_initialise(UBaseType_t temperatureHandler_priority)
 {
-	printf("SETTING UP LORAWAN");
 	xTaskCreate(
 	temperature_handler_task
 	,  "TemperatureTask"
@@ -69,8 +68,8 @@ void getTemperatureMesurements(temperatureHandler_t self){
 	//xTaskDelayUntil( &xLastWakeTime, xFrequency );
 	//self->humidity = hih8120_getHumidity();
 	
-		self->temperature = averageTemp / measurementCount;
-		self->humidity = averageHumidity / measurementCount;
+		self->temperature = averageTemp / tempMeasurementCount;
+		self->humidity = averageHumidity / tempMeasurementCount;
 		
 	printf("Getting temperature measurements from function.");
 	
@@ -111,17 +110,17 @@ void temperature_handler_task( void *pvParameters ){
 				puts("Temp task failed to work again!");
 			}
 			
-		measurementCount++;
-		if(measurementCount <= 20){
+		tempMeasurementCount++;
+		if(tempMeasurementCount <= 20){
 			averageTemp += hih8120_getTemperature();
 			averageHumidity += hih8120_getHumidity();
 		}
 		else{
-			measurementCount = 1;
+			tempMeasurementCount = 1;
 				averageTemp = hih8120_getTemperature();
 				averageHumidity = hih8120_getHumidity();
 		}
-		printf("Measurement number: %d", measurementCount);
+		printf("Measurement number: %d", tempMeasurementCount);
 		printf("Got temperature measurements");
 	}
 }
