@@ -11,7 +11,7 @@
 #include "DownLinkHandler.h"
 //#include "Configuration.h"
 #include <stdlib.h>
-
+#include <avr/include/avr/eeprom.h>//persistence
 #include <lora_driver.h>
 /*Leds*/
 //#include <iled.h>
@@ -44,9 +44,20 @@ void lora_DownLinkHandler_Task(MessageBufferHandle_t messageBuffer)
 	printf("DOWN LINK: from port: %d with %d bytes received!", _downlink_Payload.portNo, _downlink_Payload.len); // Just for Debug
 	
 	//We need to know the exactly what we are getting, because we need the length
-	if(_downlink_Payload.len==2)
+	if(_downlink_Payload.len==10)
 	{
 		//Here we do what we want with the information		
+		if((_downlink_Payload.bytes[0] << 8) + _downlink_Payload.bytes[1] == 0)
+		{
+			//need servo
+		}
+		else
+		{
+			for (int i=0; i<=9; i++)
+			{
+				eeprom_write_byte(i,_downlink_Payload.bytes[i]);
+			}
+		}
 	}
 	
 }
