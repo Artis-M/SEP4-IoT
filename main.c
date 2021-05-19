@@ -34,9 +34,9 @@ void lora_handler_initialise(UBaseType_t lora_handler_task_priority);
 /*-----------------------------------------------------------*/
 void create_tasks_and_semaphores(void)
 {
-lora_handler_initialise(3);
-printf("Created the message buffer");
-lora_DownLinkHandler_Create(tskIDLE_PRIORITY + 1, configMINIMAL_STACK_SIZE, downLinkMessageBufferHandle);
+lora_handler_initialise(2);
+createSensors();
+lora_DownLinkHandler_Create(3, configMINIMAL_STACK_SIZE, downLinkMessageBufferHandle);
 }
 
 
@@ -45,14 +45,15 @@ void initialiseSystem()
 	downLinkMessageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t)*2);
 	// Set output ports for leds used in the example
 	//DDRA |= _BV(DDA0) | _BV(DDA7);
-
+FREERTOS_CONFIG_H
 	// Make it possible to use stdio on COM port 0 (USB) on Arduino board - Setting 57600,8,N,1
 	stdio_initialise(ser_USART0);
 
-
+	
 	status_leds_initialise(5); 
 	
 	lora_driver_initialise(ser_USART1, downLinkMessageBufferHandle);
+	
 	create_tasks_and_semaphores();
 
 }
@@ -62,10 +63,8 @@ void initialiseSystem()
 int main(void)
 {
 	initialiseSystem(); // Must be done as the very first thing
-	createSensors();
 	printf("Program Started!!\n");
 	vTaskStartScheduler(); // Initialise and run the freeRTOS scheduler. Execution should never return from here.
-
 	/* Replace with your application code */
 	while (1)
 	{

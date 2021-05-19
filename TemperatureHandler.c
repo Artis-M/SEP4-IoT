@@ -120,7 +120,8 @@ void temperature_handler_task( void *pvParameters ){
 				averageTemp = hih8120_getTemperature();
 				averageHumidity = hih8120_getHumidity();
 		}
-		printf("Measurement number: %d", tempMeasurementCount);
-		printf("Got temperature measurements");
+		printf("Measurement number: %d \n", tempMeasurementCount);
+		printf("Average temperature: %d \n", averageTemp);
+		printf("Average humidity: %d \n", averageHumidity);
 	}
 }

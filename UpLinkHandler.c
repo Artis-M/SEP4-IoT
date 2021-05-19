@@ -115,8 +115,8 @@ static void _lora_setup(void)
 }
 void createSensors(){
 	temperatureHandler = temperatureHandler_create();
-	//lightReader = initialiseLightDriver();
-	//light_initializeTask(3, lightReader);
+	lightReader = initialiseLightDriver();
+	light_initializeTask(3, lightReader);
 	CO2Handler = co2_create();
 }
 /*-----------------------------------------------------------*/
@@ -158,8 +158,7 @@ void lora_handler_task( void *pvParameters )
 		uint16_t garden = 33;
 		uint16_t hum = getHumidity(temperatureHandler);
 		int16_t temp = getTemperature(temperatureHandler);
-		//uint16_t lux = getLight(lightReader);
-		uint16_t lux = 111;
+		uint16_t lux = getLight(lightReader);
 		uint16_t co2_ppm = getCO2(CO2Handler); // Dummy CO2
 		
 		
