@@ -302,6 +302,12 @@
     <Compile Include="FreeRTOS\src\variantHooks.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Servo.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Servo.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="TemperatureHandler.c">
       <SubType>compile</SubType>
     </Compile>

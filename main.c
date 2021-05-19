@@ -27,6 +27,7 @@
 // define semaphore handle
 SemaphoreHandle_t xTestSemaphore;
 bool initializedTemp = false;
+MessageBufferHandle_t messageBuffer;
 
 // Prototype for LoRaWAN handler
 void lora_handler_initialise(UBaseType_t lora_handler_task_priority);
@@ -64,9 +65,12 @@ void initialiseSystem()
 	// Status Leds driver
 	status_leds_initialise(5); // Priority 5 for internal task
 	// Initialise the LoRaWAN driver without down-link buffer
-	lora_driver_initialise(1, NULL);
+	//messageBuffer = xMessageBufferCreate(14);
+	lora_driver_initialise(1, messageBuffer);
 	// Create LoRaWAN task and start it up with priority 3
 	lora_handler_initialise(3);
+	printf("Created the message buffer");
+	//lora_DownLinkHandler_Create(3, configMINIMAL_STACK_SIZE, messageBuffer);
 }
 
 

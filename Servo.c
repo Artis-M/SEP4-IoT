@@ -20,7 +20,7 @@ typedef struct Servo
 	int8_t 	percent;
 }servo;
 
-servo_t servo_initialise(void)
+servo_t servo_initialise()
 {
 	servo_t newServo = calloc(1, sizeof(servo));
 	
@@ -29,7 +29,7 @@ servo_t servo_initialise(void)
 	newServo->servoNo = 0; //J14
 	newServo->percent = 0; //middle position
 	
-	rc_servo_initialise(void);
+	rc_servo_initialise();
 	printf("Servo initialized");
 	
 	return newServo;
@@ -47,7 +47,7 @@ void servo_setPosition(uint8_t servoNo, int8_t percent)
 	}
 	else 
 	{
-		servo_t->percent = percent;
+		//servo_t->percent = percent; what is going on I am dying - Artis
 	}
 }
 

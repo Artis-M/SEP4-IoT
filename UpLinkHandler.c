@@ -115,8 +115,8 @@ static void _lora_setup(void)
 }
 void createSensors(){
 	temperatureHandler = temperatureHandler_create();
-	lightReader = initialiseLightDriver();
-	light_initializeTask(3, lightReader);
+	//lightReader = initialiseLightDriver();
+	//light_initializeTask(3, lightReader);
 	CO2Handler = co2_create();
 }
 /*-----------------------------------------------------------*/
@@ -138,13 +138,13 @@ void lora_handler_task( void *pvParameters )
 
 	TickType_t xLastWakeTime;
 	//const TickType_t xFrequency = pdMS_TO_TICKS(300000UL); // Upload message every 5 minutes (300000 ms)
-	const TickType_t xFrequency = pdMS_TO_TICKS(30000UL);
+	const TickType_t xFrequency = pdMS_TO_TICKS(300000UL);
 	xLastWakeTime = xTaskGetTickCount();
 	
 	for(;;)
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-		printf("Messuring brrrrrrrrrrr");
+		printf("Messuring brrrrrrrrrrr \n");
 		//getTemperatureMesurements(temperatureHandler);
 		//getLightMeasurements(lightReader);
 		
@@ -158,8 +158,8 @@ void lora_handler_task( void *pvParameters )
 		uint16_t garden = 33;
 		uint16_t hum = getHumidity(temperatureHandler);
 		int16_t temp = getTemperature(temperatureHandler);
-		getLightMeasurements(lightReader);
-		uint16_t lux = getLight(lightReader);
+		//uint16_t lux = getLight(lightReader);
+		uint16_t lux = 111;
 		uint16_t co2_ppm = getCO2(CO2Handler); // Dummy CO2
 		
 		

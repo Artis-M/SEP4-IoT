@@ -20,17 +20,19 @@
 
 static lora_driver_payload_t _downlink_Payload;
 
-void lora_DownLinkHandler_StartTask(void* messageBuffer){
-	for(;;)
-	{
-		lora_DownLinkHandler_Task((MessageBufferHandle_t)messageBuffer);
-	}
-}
+void lora_DownLinkHandler_Task(MessageBufferHandle_t messageBuffer);
+
+//void lora_DownLinkHandler_StartTask(void* messageBuffer){
+//	for(;;)
+//	{
+//		lora_DownLinkHandler_Task((MessageBufferHandle_t)messageBuffer);
+//	}
+//}
 
 void lora_DownLinkHandler_Create(UBaseType_t priority, UBaseType_t stack, MessageBufferHandle_t messageBuffer)
 {
 	xTaskCreate(
-	lora_DownLinkHandler_StartTask
+	lora_DownLinkHandler_Task
 	,  "LRDHHand" //don't know what type the constant should be
 	,  stack+200
 	,  (void*)messageBuffer
@@ -45,7 +47,7 @@ void lora_DownLinkHandler_Task(MessageBufferHandle_t messageBuffer)
 	printf("DOWN LINK: from port: %d with %d bytes received!", _downlink_Payload.portNo, _downlink_Payload.len); // Just for Debug
 	
 	//We need to know the exactly what we are getting, because we need the length
-	if(_downlink_Payload.len==10)
+	if(_downlink_Payload.len==8)
 	{
 		//Here we do what we want with the information		
 		if((_downlink_Payload.bytes[0] << 8) + _downlink_Payload.bytes[1] == 0)
@@ -59,7 +61,7 @@ void lora_DownLinkHandler_Task(MessageBufferHandle_t messageBuffer)
 		}
 		else
 		{
-			for (int i=0; i<=9; i++)
+			for (int i=0; i<=7; i++)
 			{
 				eeprom_write_byte(i,_downlink_Payload.bytes[i]);
 			}
