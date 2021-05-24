@@ -70,13 +70,6 @@ void initialiseCO2Sensor(){
 	mh_z19_injectCallBack(myCo2CallBack);
 }
 
-void co2_executeTask(CO2Handler_t self)
-{
-	for(;;)
-	{
-		getCO2Mesurement(self);
-	}
-}
 
 void getCO2Mesurement(CO2Handler_t self){
 	rc = mh_z19_takeMeassuring();

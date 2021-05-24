@@ -55,6 +55,7 @@ void start_temperature_task(void* self){
 		temperature_handler_task((temperatureHandler_t) self);
 	}
 }
+
 void reset_averageTemperature(temperatureHandler_t self){
 	self->tempMeasurementCount = 0;
 	self->averageHumidity = 0;
