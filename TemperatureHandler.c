@@ -122,7 +122,11 @@ void temperature_handler_task(temperatureHandler_t self){
 						printf("Average temperature: %d \n", self->averageTemp / self->tempMeasurementCount);
 						printf("Average humidity: %d \n", self->averageHumidity / self->tempMeasurementCount);
 					
-					rc_servo_setPosition(0, -100);
+				//	int open = self->tempMeasurementCount * 10;
+					//if(open > 100){
+					//	open = open - 50;
+				//	}
+				//	rc_servo_setPosition(0, open);
 			}
 	
 }

@@ -47,10 +47,10 @@ void lora_DownLinkHandler_Task(MessageBufferHandle_t messageBuffer)
 			printf("DOWN LINK: from port: %d with %d bytes received! \n", _downlink_Payload.portNo, _downlink_Payload.len); // Just for Debug
 			
 			//We need to know the exactly what we are getting, because we need the length
-			if(_downlink_Payload.len==8)
+			if(_downlink_Payload.len=2)
 			{
 				int i;
-				for (i = 0; i < 7; i++)
+				for (i = 0; i < 1; i++)
 				{
 					if (i > 0) printf(":");
 					printf("%02X", _downlink_Payload.bytes[i]);
@@ -59,19 +59,11 @@ void lora_DownLinkHandler_Task(MessageBufferHandle_t messageBuffer)
 				//Here we do what we want with the information
 				if((_downlink_Payload.bytes[0] << 8) + _downlink_Payload.bytes[1] == 0)
 				{
-					if(_downlink_Payload.bytes[2] + _downlink_Payload.bytes[3] == 1)
-					servo_setPosition(0, 100); //fully open to the right
-					else if(_downlink_Payload.bytes[2] + _downlink_Payload.bytes[3] == 0)
-					{
-						servo_setPosition(0, 0); //closed
-					}
+					rc_servo_setPosition(0, -100); //fully open to the right
 				}
-				else
-				{
-					for (int i=0; i<=7; i++)
-					{
-						eeprom_write_byte(i,_downlink_Payload.bytes[i]);
-					}
-				}
+					else{
+						rc_servo_setPosition(0, 100); //closed
+						}
 			}
+		
 }
