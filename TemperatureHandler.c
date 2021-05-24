@@ -13,33 +13,53 @@
 #include <semphr.h>
 #include <hih8120.h>
 #include <stdio.h>
+#include <rc_servo.h>
 #include "TemperatureHandler.h"
 
-	int tempMeasurementCount = 1;
-	int16_t averageTemp;
-	uint16_t averageHumidity;
+	
 	
 typedef struct temperatureHandler{
 	int16_t temperature;
 	uint16_t humidity;
+	int tempMeasurementCount;
+	int16_t averageTemp;
+	uint16_t averageHumidity;
 } temperatureHandler;
 
-void temperature_handler_task( void *pvParameters );
+void start_temperature_task(void* self);
 
-void temperature_handler_initialise(UBaseType_t temperatureHandler_priority)
+void temperature_handler_initialise(UBaseType_t temperatureHandler_priority, temperatureHandler_t self)
 {
 	xTaskCreate(
-	temperature_handler_task
+	start_temperature_task
 	,  "TemperatureTask"
 	,  configMINIMAL_STACK_SIZE+100
-	,  NULL
+	,  (void*) self
 	,  temperatureHandler_priority
 	,  NULL );
 }
 
-
-
-
+void start_temperature_task(void* self){
+		TickType_t xLastWakeTime;
+		const TickType_t xFrequency = pdMS_TO_TICKS(15000UL);
+		xLastWakeTime = xTaskGetTickCount();
+			const TickType_t xFrequency2 = pdMS_TO_TICKS(100UL);
+		
+	for(;;){
+			xTaskDelayUntil( &xLastWakeTime, xFrequency );
+					if ( HIH8120_OK != hih8120_wakeup() )
+					{
+						puts("Temp task failed to work!");
+					}
+			xTaskDelayUntil( &xLastWakeTime, xFrequency2 );
+		temperature_handler_task((temperatureHandler_t) self);
+	}
+}
+void reset_averageTemperature(temperatureHandler_t self){
+	self->tempMeasurementCount = 0;
+	self->averageHumidity = 0;
+	self->averageTemp = 0;
+}
 
 temperatureHandler_t temperatureHandler_create(){
 	temperatureHandler_t _new_reader = calloc(1, sizeof(temperatureHandler));
@@ -48,29 +68,23 @@ temperatureHandler_t temperatureHandler_create(){
 		}
 	_new_reader->temperature = 0;
 	_new_reader->humidity = 0;
+	_new_reader->averageHumidity = 0;
+	_new_reader->averageTemp = 0;
+	_new_reader->tempMeasurementCount = 0;
 	
 	if ( HIH8120_OK == hih8120_initialise() )
 	{
 		printf("Temp sensor initialized");
 		printf("_______________________");
 	}
-	printf("Temperature sensor init?");
+	printf("Temperature sensor initialised?");
 	
-	temperature_handler_initialise(3);
+	temperature_handler_initialise(3, _new_reader);
 	return _new_reader;
 }
 void getTemperatureMesurements(temperatureHandler_t self){
-	
-	//TickType_t xLastWakeTime;
-	//const TickType_t xFrequency = 200/portTICK_PERIOD_MS; // 200 ms
-	//xTaskDelayUntil( &xLastWakeTime, xFrequency );
-	//self->temperature = hih8120_getTemperature();
-	//xTaskDelayUntil( &xLastWakeTime, xFrequency );
-	//self->humidity = hih8120_getHumidity();
-	
-		self->temperature = averageTemp / tempMeasurementCount;
-		self->humidity = averageHumidity / tempMeasurementCount;
-		
+		self->temperature = self->averageTemp / self->tempMeasurementCount;
+		self->humidity = self->averageHumidity / self->tempMeasurementCount;
 	printf("Getting temperature measurements from function.");
 	
 }
@@ -86,42 +100,29 @@ uint16_t getHumidity(temperatureHandler_t self){
 }
 
 
-void temperature_handler_task( void *pvParameters ){
-	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = pdMS_TO_TICKS(15000UL);
-	const TickType_t xFrequency2 = pdMS_TO_TICKS(100UL);
-	xLastWakeTime = xTaskGetTickCount();
-	for(;;)
-	{
-		xTaskDelayUntil( &xLastWakeTime, xFrequency );
+void temperature_handler_task(temperatureHandler_t self){
+
 		
-		if ( HIH8120_OK != hih8120_wakeup() )
-		{
-			// Something went wrong
-			// Investigate the return code further
-			puts("Temp task failed to work!");
-		}
-		
-			xTaskDelayUntil( &xLastWakeTime, xFrequency2 );
 			if ( HIH8120_OK !=  hih8120_measure() )
 			{
-				// Something went wrong
-				// Investigate the return code further
 				puts("Temp task failed to work again!");
 			}
-			
-		tempMeasurementCount++;
-		if(tempMeasurementCount <= 20){
-			averageTemp += hih8120_getTemperature();
-			averageHumidity += hih8120_getHumidity();
-		}
-		else{
-			tempMeasurementCount = 1;
-				averageTemp = hih8120_getTemperature();
-				averageHumidity = hih8120_getHumidity();
-		}
-		printf("Measurement number: %d \n", tempMeasurementCount);
-		printf("Average temperature: %d \n", averageTemp);
-		printf("Average humidity: %d \n", averageHumidity);
-	}
+			else{
+				printf("Temp: %f\n", hih8120_getTemperature());
+				printf("Humidity: %f\n", hih8120_getHumidity());
+				
+				self->tempMeasurementCount++;
+				
+				self->averageTemp += (int16_t)hih8120_getTemperature();
+				
+				self->averageHumidity += (int16_t)hih8120_getHumidity();
+				
+				
+						printf("Measurement number: %d \n", self->tempMeasurementCount);
+						printf("Average temperature: %d \n", self->averageTemp / self->tempMeasurementCount);
+						printf("Average humidity: %d \n", self->averageHumidity / self->tempMeasurementCount);
+					
+					rc_servo_setPosition(0, -100);
+			}
+	
 }

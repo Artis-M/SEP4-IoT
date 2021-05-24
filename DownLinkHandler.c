@@ -42,7 +42,7 @@ void lora_DownLinkHandler_Create(UBaseType_t priority, UBaseType_t stack, Messag
 
 void lora_DownLinkHandler_Task(MessageBufferHandle_t messageBuffer)
 {
-	printf("queres?");
+			printf("Downlink Task Started \n");
 			xMessageBufferReceive(messageBuffer,&_downlink_Payload,sizeof(lora_driver_payload_t),portMAX_DELAY);
 			printf("DOWN LINK: from port: %d with %d bytes received! \n", _downlink_Payload.portNo, _downlink_Payload.len); // Just for Debug
 			
@@ -55,7 +55,7 @@ void lora_DownLinkHandler_Task(MessageBufferHandle_t messageBuffer)
 					if (i > 0) printf(":");
 					printf("%02X", _downlink_Payload.bytes[i]);
 				}
-	
+				
 				//Here we do what we want with the information
 				if((_downlink_Payload.bytes[0] << 8) + _downlink_Payload.bytes[1] == 0)
 				{

@@ -133,11 +133,13 @@ void lora_handler_task( void *pvParameters )
 
 	_lora_setup();
 
-	_uplink_payload.len = 12;
+	_uplink_payload.len = 8;
 	_uplink_payload.portNo = 2;
 
 	TickType_t xLastWakeTime;
 	//const TickType_t xFrequency = pdMS_TO_TICKS(300000UL); // Upload message every 5 minutes (300000 ms)
+	//const TickType_t xFrequency = pdMS_TO_TICKS(300000UL);
+
 	const TickType_t xFrequency = pdMS_TO_TICKS(300000UL);
 	xLastWakeTime = xTaskGetTickCount();
 	
@@ -145,6 +147,7 @@ void lora_handler_task( void *pvParameters )
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 		printf("Messuring brrrrrrrrrrr \n");
+		
 		//getTemperatureMesurements(temperatureHandler);
 		//getLightMeasurements(lightReader);
 		
@@ -154,27 +157,31 @@ void lora_handler_task( void *pvParameters )
 		
 		getTemperatureMesurements(temperatureHandler);
 		
-		uint16_t plant = 3;
-		uint16_t garden = 33;
-		uint16_t hum = getHumidity(temperatureHandler);
-		int16_t temp = getTemperature(temperatureHandler);
-		uint16_t lux = getLight(lightReader);
-		uint16_t co2_ppm = getCO2(CO2Handler); // Dummy CO2
-		
-		
+		uint16_t hum = getHumidity(temperatureHandler) + 4096;
+		int16_t temp = getTemperature(temperatureHandler) + 12288;
+		reset_averageTemperature(temperatureHandler);
+		uint16_t lux = getLight(lightReader) + 16384;
+		reset_averageLight(lightReader);
+		uint16_t co2_ppm = getCO2(CO2Handler) + 8192;
+		reset_averageCO2(CO2Handler);
 		
 		_uplink_payload.bytes[0] = hum >> 8;
 		_uplink_payload.bytes[1] = hum & 0xFF;
+		
 		_uplink_payload.bytes[2] = temp >> 8;
 		_uplink_payload.bytes[3] = temp & 0xFF;
+		
 		_uplink_payload.bytes[4] = co2_ppm >> 8;
 		_uplink_payload.bytes[5] = co2_ppm & 0xFF;
-		_uplink_payload.bytes[6] = lux >> 8;
+
+		_uplink_payload.bytes[6] = lux  >> 8;
 		_uplink_payload.bytes[7] = lux & 0xFF;
-		_uplink_payload.bytes[8] = plant >> 8;
-		_uplink_payload.bytes[9] = plant & 0xFF;
-		_uplink_payload.bytes[10] = garden >> 8;
-		_uplink_payload.bytes[11] = garden & 0xFF;
+
+		for (int i = 0; i < 7; i++)
+		{
+			if (i > 0) printf(":");
+			printf("%02X", _uplink_payload.bytes[i]);
+		}
 		
 
 		status_leds_shortPuls(led_ST4);  // OPTIONAL

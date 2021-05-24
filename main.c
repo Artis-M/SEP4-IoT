@@ -52,6 +52,8 @@ FREERTOS_CONFIG_H
 	
 	status_leds_initialise(5); 
 	
+	rc_servo_initialise();
+	
 	lora_driver_initialise(ser_USART1, downLinkMessageBufferHandle);
 	
 	create_tasks_and_semaphores();

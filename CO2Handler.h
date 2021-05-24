@@ -21,3 +21,5 @@ void initialiseCO2Sensor(); //why does this exist
 void co2_executeTask(CO2Handler_t self);
 void getCO2Mesurement(CO2Handler_t self);
 uint16_t getCO2(CO2Handler_t self);
+void start_co2_task(void* self);
+void reset_averageCO2(CO2Handler_t self);
