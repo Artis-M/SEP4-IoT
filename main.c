@@ -24,10 +24,12 @@
 #include <lora_driver.h>
 #include <status_leds.h>
 
+#include "SharedPrint.h"
 // define semaphore handle
-SemaphoreHandle_t xTestSemaphore;
+
 bool initializedTemp = false;
 MessageBufferHandle_t downLinkMessageBufferHandle;
+
 // Prototype for LoRaWAN handler
 void lora_handler_initialise(UBaseType_t lora_handler_task_priority);
 
@@ -42,6 +44,7 @@ lora_DownLinkHandler_Create(3, configMINIMAL_STACK_SIZE, downLinkMessageBufferHa
 
 void initialiseSystem()
 {
+	create_shared_print();
 	downLinkMessageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t)*2);
 	// Set output ports for leds used in the example
 	//DDRA |= _BV(DDA0) | _BV(DDA7);

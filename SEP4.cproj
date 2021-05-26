@@ -308,6 +308,12 @@
     <Compile Include="Servo.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="SharedPrint.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SharedPrint.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="TemperatureHandler.c">
       <SubType>compile</SubType>
     </Compile>

@@ -13,10 +13,9 @@
 #include <semphr.h>
 #include <hih8120.h>
 #include <stdio.h>
+#include "SharedPrint.h"
 #include <rc_servo.h>
 #include "TemperatureHandler.h"
-
-	
 	
 typedef struct temperatureHandler{
 	int16_t temperature;
@@ -75,10 +74,10 @@ temperatureHandler_t temperatureHandler_create(){
 	
 	if ( HIH8120_OK == hih8120_initialise() )
 	{
-		printf("Temp sensor initialized");
-		printf("_______________________");
+		printShared("Temp sensor initialized");
+		printShared("_______________________");
 	}
-	printf("Temperature sensor initialised?");
+	printShared("Temperature sensor initialised?");
 	
 	temperature_handler_initialise(3, _new_reader);
 	return _new_reader;
@@ -86,16 +85,16 @@ temperatureHandler_t temperatureHandler_create(){
 void getTemperatureMesurements(temperatureHandler_t self){
 		self->temperature = self->averageTemp / self->tempMeasurementCount;
 		self->humidity = self->averageHumidity / self->tempMeasurementCount;
-	printf("Getting temperature measurements from function.");
+	printShared("Getting temperature measurements from function.");
 	
 }
 int16_t getTemperature(temperatureHandler_t self){
-		printf("Temperature: %d", self->temperature);
+		printShared("Temperature: %d", self->temperature);
 			return self->temperature;
 		
 }
 uint16_t getHumidity(temperatureHandler_t self){
-	printf("Humidity: %d", self->humidity);
+	printShared("Humidity: %d", self->humidity);
 	return self->humidity;
 	
 }
@@ -106,22 +105,22 @@ void temperature_handler_task(temperatureHandler_t self){
 		
 			if ( HIH8120_OK !=  hih8120_measure() )
 			{
-				puts("Temp task failed to work again!");
+				printShared("Temp task failed to work again!");
 			}
 			else{
-				printf("Temp: %f\n", hih8120_getTemperature());
-				printf("Humidity: %f\n", hih8120_getHumidity());
+				printShared("Temp: %f\n", hih8120_getTemperature());
+				printShared("Humidity: %f\n", hih8120_getHumidity());
 				
 				self->tempMeasurementCount++;
 				
 				self->averageTemp += (int16_t)hih8120_getTemperature();
 				
 				self->averageHumidity += (int16_t)hih8120_getHumidity();
-				
-				
-						printf("Measurement number: %d \n", self->tempMeasurementCount);
-						printf("Average temperature: %d \n", self->averageTemp / self->tempMeasurementCount);
-						printf("Average humidity: %d \n", self->averageHumidity / self->tempMeasurementCount);
+			
+		
+						printShared("Measurement number: %d \n", self->tempMeasurementCount);
+						printShared("Average temperature: %d \n", self->averageTemp / self->tempMeasurementCount);
+						printShared("Average humidity: %d \n", self->averageHumidity / self->tempMeasurementCount);
 					
 			}
 	
