@@ -115,9 +115,9 @@ static void _lora_setup(void)
 	}
 }
 void createSensors(){
-	temperatureHandler = temperatureHandler_create();
-	lightReader = initialiseLightDriver();
-	CO2Handler = co2_create();
+	temperatureHandler = temperatureHandler_create(3);
+	lightReader = initialiseLightDriver(3);
+	CO2Handler = co2_create(4);
 }
 /*-----------------------------------------------------------*/
 void lora_handler_task( void *pvParameters )
@@ -147,14 +147,7 @@ void lora_handler_task( void *pvParameters )
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 		printf("Messuring brrrrrrrrrrr \n");
-		
-		//getTemperatureMesurements(temperatureHandler);
-		//getLightMeasurements(lightReader);
-		
-		//uint16_t hum = getHumidity(temperatureHandler);
-		//int16_t temp = getTemperature(temperatureHandler);
-		//uint16_t lux = getLight(lightReader);
-		
+	
 		getTemperatureMesurements(temperatureHandler);
 		
 		uint16_t hum = getHumidity(temperatureHandler) + 4096;

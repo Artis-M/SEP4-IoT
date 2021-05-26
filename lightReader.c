@@ -17,9 +17,8 @@
 #include "event_groups.h"
 #include "task.h"
 #include "lightReader.h"
+#include "SharedPrint.h"
 
-
-SemaphoreHandle_t sharedLightMutex;
 
 void light_task_start(void* self);
 void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self);
@@ -32,11 +31,10 @@ typedef struct lightReader
 	
 }lightReader;
 
-lightReader_t initialiseLightDriver(SemaphoreHandle_t sharedMutex){
+lightReader_t initialiseLightDriver(UBaseType_t light_task_priority){
 	lightReader_t new_reader = calloc(1, sizeof(lightReader));
 	
 	if(new_reader == NULL) return NULL;
-	sharedLightMutex = sharedMutex;
 	new_reader->lux = 0;
 	new_reader->averageLight = 0;
 	new_reader->lightMeasurementCount = 0;
@@ -44,10 +42,10 @@ lightReader_t initialiseLightDriver(SemaphoreHandle_t sharedMutex){
 	if ( TSL2591_OK == tsl2591_initialise(tsl2591Callback))
 	{
 		puts("Light driver initialized");
-		printf("Return code is: %s", tsl2591_initialise(tsl2591Callback));
+		printShared("Return code is: %s", tsl2591_initialise(tsl2591Callback));
 	}
 	
-	light_initializeTask(3, new_reader);
+	light_initializeTask(light_task_priority, new_reader);
 	
 	return new_reader;
 }
@@ -90,7 +88,7 @@ void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
 		else if( TSL2591_OVERFLOW == rc )
 		{
 			
-				printf("\nFull spectrum overflow - change gain and integration time\n");
+				printShared("\nFull spectrum overflow - change gain and integration time\n");
 		
 			
 		}
@@ -101,7 +99,7 @@ void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
 		else if( TSL2591_OVERFLOW == rc )
 		{
 			
-					printf("Visible overflow - change gain and integration time\n");
+					printShared("Visible overflow - change gain and integration time\n");
 		
 	
 		}
@@ -113,7 +111,7 @@ void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
 		else if( TSL2591_OVERFLOW == rc )
 		{
 				
-							printf("Infrared overflow - change gain and integration time\n");
+							printShared("Infrared overflow - change gain and integration time\n");
 			
 	
 		}
@@ -121,7 +119,7 @@ void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
 		if ( TSL2591_OK == (rc = tsl2591_getLux(&_lux)) )
 		{
 			
-			printf("Light current float: %f\n", _lux);
+			printShared("Light current float: %f\n", _lux);
 		
 	
 			self->lux = _lux;
@@ -130,7 +128,7 @@ void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
 		else if( TSL2591_OVERFLOW == rc )
 		{
 			
-			printf("Lux overflow - change gain and integration time\n");
+			printShared("Lux overflow - change gain and integration time\n");
 
 		}
 		break;
@@ -193,9 +191,9 @@ void light_handler_task(lightReader_t self)
 		
 		self->averageLight += self->lux;
 		
-					printf("Measurement number of light: %d \n", self->lightMeasurementCount);
-					printf("Value of average light: %d \n", self->averageLight/self->lightMeasurementCount);
-					printf("Value of current light: %d \n", self->lux);
+					printShared("Measurement number of light: %d \n", self->lightMeasurementCount);
+					printShared("Value of average light: %d \n", self->averageLight/self->lightMeasurementCount);
+					printShared("Value of current light: %d \n", self->lux);
 	
 }
 

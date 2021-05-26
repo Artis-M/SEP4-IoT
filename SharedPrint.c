@@ -7,7 +7,6 @@ SemaphoreHandle_t sharedMutex;
 
 void create_shared_print(){
 	sharedMutex = xSemaphoreCreateMutex();
-	xSemaphoreGive( sharedMutex);
 }
 
 void printShared(const char *format, ...){
@@ -18,7 +17,7 @@ void printShared(const char *format, ...){
 		xSemaphoreGive( sharedMutex);
 	}
 	else{
-		
+		//printf("Something is very wrong uwu \n");
 	}
 	
 }

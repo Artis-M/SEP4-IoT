@@ -15,7 +15,7 @@
 
 typedef struct temperatureHandler* temperatureHandler_t;
 
-temperatureHandler_t temperatureHandler_create();
+temperatureHandler_t temperatureHandler_create(UBaseType_t temp_task_priority);
 temperatureHandler_t tempHander_destroy(temperatureHandler_t self);
 void getTemperatureMesurements(temperatureHandler_t self);
 int16_t  getTemperature(temperatureHandler_t self);

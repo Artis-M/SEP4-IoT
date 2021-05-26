@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <ATMEGA_FreeRTOS.h>
 #include "CO2Handler.h"
-
+#include "SharedPrint.h"
 uint16_t ppm;
 mh_z19_returnCode_t rc;
 
@@ -24,7 +24,7 @@ typedef struct CO2Handler
 	
 } CO2Handler;
 
-CO2Handler_t co2_create(){
+CO2Handler_t co2_create(UBaseType_t co2_task_priority){
 	CO2Handler_t _new_reader = calloc(1, sizeof(CO2Handler));
 	if (_new_reader == NULL){
 		return NULL;
@@ -34,7 +34,7 @@ CO2Handler_t co2_create(){
 	_new_reader->co2MeasurementCount = 0;
 	initialiseCO2Sensor();
 	
-	co2_initialize_task(3, _new_reader);
+	co2_initialize_task(co2_task_priority, _new_reader);
 	return _new_reader;
 }
 
@@ -75,14 +75,14 @@ void getCO2Mesurement(CO2Handler_t self){
 	rc = mh_z19_takeMeassuring();
 	if (rc != MHZ19_OK)
 	{
-		printf("CO2 Measurement failed.");
+		//printf("CO2 Measurement failed.");
 	}
 	self->co2ppm = ppm;
 }
 
 void myCo2CallBack(uint16_t ppmCall)
 {
-	printf("CO2: %d \n", ppm);
+	//printf("CO2: %d \n", ppm);
 	ppm = ppmCall;
 }
 
@@ -96,11 +96,11 @@ void co2_handler_task(CO2Handler_t self){
 		rc = mh_z19_takeMeassuring();
 		if (rc != MHZ19_OK)
 		{
-		printf("CO2 Measurement failed.");
+		printShared("CO2 Measurement failed.");
 		return;
 		}
 			self->co2MeasurementCount++;
 			self->averageCO2 += ppm;
-			printf("Measurement number: %d \n", self->co2MeasurementCount);
-			printf("Measurement number: %d \n", self->averageCO2 / self->co2MeasurementCount);
+			printShared("Measurement number: %d \n", self->co2MeasurementCount);
+			printShared("Measurement number: %d \n", self->averageCO2 / self->co2MeasurementCount);
 }

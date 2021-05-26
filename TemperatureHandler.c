@@ -61,7 +61,7 @@ void reset_averageTemperature(temperatureHandler_t self){
 	self->averageTemp = 0;
 }
 
-temperatureHandler_t temperatureHandler_create(){
+temperatureHandler_t temperatureHandler_create(UBaseType_t temp_task_priority){
 	temperatureHandler_t _new_reader = calloc(1, sizeof(temperatureHandler));
 		if (_new_reader == NULL){
 				return NULL;
@@ -74,12 +74,12 @@ temperatureHandler_t temperatureHandler_create(){
 	
 	if ( HIH8120_OK == hih8120_initialise() )
 	{
-		printShared("Temp sensor initialized");
-		printShared("_______________________");
+		printShared("Temp sensor initialized \n");
+		printShared("_______________________ \n");
 	}
-	printShared("Temperature sensor initialised?");
+	printShared("Temperature sensor initialized? \n");
 	
-	temperature_handler_initialise(3, _new_reader);
+	temperature_handler_initialise(temp_task_priority, _new_reader);
 	return _new_reader;
 }
 void getTemperatureMesurements(temperatureHandler_t self){
