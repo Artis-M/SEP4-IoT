@@ -24,31 +24,42 @@
 #include <lora_driver.h>
 #include <status_leds.h>
 
+#include "event_groups.h"
+
 #include "SharedPrint.h"
 // define semaphore handle
 
-bool initializedTemp = false;
 MessageBufferHandle_t downLinkMessageBufferHandle;
+EventGroupHandle_t taskReadyBits = NULL;
 
+#define BIT_TEMP_READY (1 << 0)
+#define BIT_CO2_READY (1 << 1)
+#define BIT_LIGHT_READY (1 << 2)
+
+#define ALL_SENSOR_BITS (BIT_TEMP_READY | BIT_CO2_READY | BIT_LIGHT_READY)
 // Prototype for LoRaWAN handler
 void lora_handler_initialise(UBaseType_t lora_handler_task_priority);
 
 /*-----------------------------------------------------------*/
 void create_tasks_and_semaphores(void)
 {
+create_shared_print();
 lora_handler_initialise(2);
-createSensors();
+createSensors(taskReadyBits, BIT_TEMP_READY, BIT_CO2_READY, BIT_LIGHT_READY);
 lora_DownLinkHandler_Create(3, configMINIMAL_STACK_SIZE, downLinkMessageBufferHandle);
 }
 
 
 void initialiseSystem()
 {
-	create_shared_print();
+	taskReadyBits = xEventGroupCreate();
+
+	
+
 	downLinkMessageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t)*2);
 	// Set output ports for leds used in the example
 	//DDRA |= _BV(DDA0) | _BV(DDA7);
-FREERTOS_CONFIG_H
+	//FREERTOS_CONFIG_H
 	// Make it possible to use stdio on COM port 0 (USB) on Arduino board - Setting 57600,8,N,1
 	stdio_initialise(ser_USART0);
 

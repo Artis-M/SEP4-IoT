@@ -18,7 +18,10 @@
 #include "task.h"
 #include "lightReader.h"
 #include "SharedPrint.h"
+#include "event_groups.h"
 
+EventGroupHandle_t task_startGroup;
+EventBits_t _readyBit;
 
 void light_task_start(void* self);
 void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self);
@@ -31,7 +34,7 @@ typedef struct lightReader
 	
 }lightReader;
 
-lightReader_t initialiseLightDriver(UBaseType_t light_task_priority){
+lightReader_t initialiseLightDriver(UBaseType_t light_task_priority, EventGroupHandle_t eventBits, EventBits_t bits){
 	lightReader_t new_reader = calloc(1, sizeof(lightReader));
 	
 	if(new_reader == NULL) return NULL;
@@ -39,23 +42,21 @@ lightReader_t initialiseLightDriver(UBaseType_t light_task_priority){
 	new_reader->averageLight = 0;
 	new_reader->lightMeasurementCount = 0;
 	
+	_readyBit = bits;
+	task_startGroup = eventBits;
+	
 	if ( TSL2591_OK == tsl2591_initialise(tsl2591Callback))
 	{
-		puts("Light driver initialized");
-		printShared("Return code is: %s", tsl2591_initialise(tsl2591Callback));
+		printf("Return code for light sensor is: %s", tsl2591_initialise(tsl2591Callback));
 	}
 	
+		if ( TSL2591_OK == tsl2591_enable() )
+		{
+			
+		}
 	light_initializeTask(light_task_priority, new_reader);
 	
 	return new_reader;
-}
-
-void light_executeTask(lightReader_t self)
-{
-	for (;;)
-	{
-		getLightMeasurements(self);
-	}
 }
 
 void reset_averageLight(lightReader_t self){
@@ -65,6 +66,9 @@ void reset_averageLight(lightReader_t self){
 
 void light_initializeTask(UBaseType_t lightPriority, lightReader_t self)
 {
+	
+	xEventGroupSetBits(task_startGroup, _readyBit);
+	
 	xTaskCreate(
 	light_task_start
 	,  "lightTask"
@@ -79,6 +83,7 @@ void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
 {
 	uint16_t _tmp;
 	float _lux;
+	
 	switch (rc)
 	{
 		case TSL2591_DATA_READY:
@@ -99,7 +104,7 @@ void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
 		else if( TSL2591_OVERFLOW == rc )
 		{
 			
-					printShared("Visible overflow - change gain and integration time\n");
+				printShared("Visible overflow - change gain and integration time\n");
 		
 	
 		}
@@ -111,7 +116,7 @@ void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
 		else if( TSL2591_OVERFLOW == rc )
 		{
 				
-							printShared("Infrared overflow - change gain and integration time\n");
+				printShared("Infrared overflow - change gain and integration time\n");
 			
 	
 		}
@@ -120,8 +125,9 @@ void tsl2591Callback(tsl2591_returnCode_t rc, lightReader_t self)
 		{
 			
 			printShared("Light current float: %f\n", _lux);
-		
-	
+			if(_lux != 0){
+				self->lightMeasurementCount ++;
+			}
 			self->lux = _lux;
 			
 		}
@@ -151,11 +157,6 @@ void getLightMeasurements(lightReader_t self){
 	TickType_t xLastWakeTime;
 	const TickType_t xFrequency = 500/portTICK_PERIOD_MS; // 500 ms
 	
-	if ( TSL2591_OK == tsl2591_enable() )
-	{
-		
-	}
-	
 	xTaskDelayUntil( &xLastWakeTime, xFrequency );
 	
 	if ( TSL2591_OK != tsl2591_fetchData() )
@@ -165,7 +166,6 @@ void getLightMeasurements(lightReader_t self){
 	else
 	{
 		tsl2591Callback(TSL2591_DATA_READY, self);
-			self->lightMeasurementCount ++;
 	}
 }
 
@@ -175,7 +175,7 @@ uint16_t getLight(lightReader_t self){
 
 void light_task_start(void* self){
 		TickType_t xLastWakeTime;
-		const TickType_t xFrequency = pdMS_TO_TICKS(15000UL);
+		const TickType_t xFrequency = pdMS_TO_TICKS(15500UL);
 		xLastWakeTime = xTaskGetTickCount();
 		
 	for(;;)
@@ -187,13 +187,20 @@ void light_task_start(void* self){
 
 void light_handler_task(lightReader_t self)
 {
-		getLightMeasurements(self);
+		EventBits_t readyBits = xEventGroupWaitBits(task_startGroup,
+		_readyBit,
+		pdFALSE,
+		pdTRUE,
+		portMAX_DELAY);
 		
-		self->averageLight += self->lux;
-		
-					printShared("Measurement number of light: %d \n", self->lightMeasurementCount);
-					printShared("Value of average light: %d \n", self->averageLight/self->lightMeasurementCount);
-					printShared("Value of current light: %d \n", self->lux);
-	
+		if ((readyBits & (_readyBit)) == (_readyBit)) {
+			getLightMeasurements(self);
+			
+			self->averageLight += self->lux;
+			
+			printShared("Measurement number of light: %d \n", self->lightMeasurementCount);
+			printShared("Value of average light: %d \n", self->averageLight/self->lightMeasurementCount);
+			printShared("Value of current light: %d \n", self->lux);	
+		}	
 }
 

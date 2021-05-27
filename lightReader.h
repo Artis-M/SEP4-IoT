@@ -13,11 +13,10 @@
 #include <stdlib.h>
 #include "task.h"
 #include "event_groups.h"
-
+#include "event_groups.h"
 typedef struct lightReader* lightReader_t;
 
-lightReader_t initialiseLightDriver(UBaseType_t light_task_priority); //remember arguments here
-void light_executeTask(lightReader_t self);
+lightReader_t initialiseLightDriver(UBaseType_t light_task_priority, EventGroupHandle_t eventBits, EventBits_t bits); //remember arguments here
 void light_destroy(lightReader_t self);
 uint16_t getLight(lightReader_t self);
 void getLightMeasurements(lightReader_t self);

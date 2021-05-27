@@ -34,7 +34,7 @@ void lora_DownLinkHandler_Create(UBaseType_t priority, UBaseType_t stack, Messag
 	xTaskCreate(
 	lora_DownLinkHandler_StartTask
 	,  "LRDHDownHand"
-	,  stack+200
+	,  stack
 	,  (void*)messageBuffer
 	,  priority
 	,  NULL );

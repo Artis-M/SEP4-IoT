@@ -16,6 +16,7 @@
 #include "CO2Handler.h"
 #include "TemperatureHandler.h"
 #include "lightReader.h"
+#include "SharedPrint.h"
 
 // Parameters for OTAA join - You have got these in a mail from IHA
 #define LORA_appEUI "689DF9DF68156742"
@@ -114,11 +115,12 @@ static void _lora_setup(void)
 		}
 	}
 }
-void createSensors(){
-	temperatureHandler = temperatureHandler_create(3);
-	lightReader = initialiseLightDriver(3);
-	CO2Handler = co2_create(4);
+void createSensors(EventGroupHandle_t taskReadyBits, EventBits_t temp_bit, EventBits_t co2_bit, EventBits_t light_bit){
+	temperatureHandler = temperatureHandler_create(3, taskReadyBits, temp_bit);
+	lightReader = initialiseLightDriver(3, taskReadyBits, light_bit);
+	CO2Handler = co2_create(3, taskReadyBits, co2_bit);
 }
+
 /*-----------------------------------------------------------*/
 void lora_handler_task( void *pvParameters )
 {
@@ -146,10 +148,9 @@ void lora_handler_task( void *pvParameters )
 	for(;;)
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-		printf("Messuring brrrrrrrrrrr \n");
-	
+		printShared("Sending data to LORA \n");
+
 		getTemperatureMesurements(temperatureHandler);
-		
 		uint16_t hum = getHumidity(temperatureHandler) + 4096;
 		int16_t temp = getTemperature(temperatureHandler) + 12288;
 		reset_averageTemperature(temperatureHandler);
@@ -173,11 +174,11 @@ void lora_handler_task( void *pvParameters )
 		for (int i = 0; i < 7; i++)
 		{
 			if (i > 0) printf(":");
-			printf("%02X", _uplink_payload.bytes[i]);
+			printShared("%02X", _uplink_payload.bytes[i]);
 		}
 		
 
 		status_leds_shortPuls(led_ST4);  // OPTIONAL
-		printf("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));
+		printShared("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));
 	}
 }
