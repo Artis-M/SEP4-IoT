@@ -9,7 +9,6 @@
 #include <stddef.h>
 #include <stdio.h>
 #include "DownLinkHandler.h"
-#include "Servo.h"
 //#include "Configuration.h"
 #include <stdlib.h>
 #include <avr/eeprom.h>//persistence
@@ -17,6 +16,7 @@
 /*Leds*/
 //#include <iled.h>
 #include <message_buffer.h>
+#include <rc_servo.h>
 
 static lora_driver_payload_t _downlink_Payload;
 
