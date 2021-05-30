@@ -15,7 +15,7 @@
 
 #include "CO2Handler.h"
 #include "TemperatureHandler.h"
-#include "lightReader.h"
+#include "LightReader.h"
 #include "SharedPrint.h"
 
 // Parameters for OTAA join - You have got these in a mail from IHA
@@ -32,8 +32,14 @@ temperatureHandler_t temperatureHandler;
 lightReader_t lightReader;
 CO2Handler_t CO2Handler;
 
-void lora_handler_initialise(UBaseType_t lora_handler_task_priority)
+void lora_handler_initialise(UBaseType_t lora_handler_task_priority, temperatureHandler_t temperatureHandlerObj, lightReader_t lightReaderObj, CO2Handler_t CO2HandlerObj)
 {
+	
+	temperatureHandler = temperatureHandlerObj;
+	lightReader = lightReaderObj;
+	CO2Handler = CO2HandlerObj;
+	
+	
 printf("SETTING UP LORAWAN");
 	xTaskCreate(
 	lora_handler_task
@@ -115,23 +121,17 @@ static void _lora_setup(void)
 		}
 	}
 }
-void createSensors(EventGroupHandle_t taskReadyBits, EventBits_t temp_bit, EventBits_t co2_bit, EventBits_t light_bit){
-	temperatureHandler = temperatureHandler_create(3, taskReadyBits, temp_bit);
-	lightReader = initialiseLightDriver(3, taskReadyBits, light_bit);
-	CO2Handler = co2_create(3, taskReadyBits, co2_bit);
-}
 
-/*-----------------------------------------------------------*/
 void lora_handler_task( void *pvParameters )
 {
-	// Hardware reset of LoRaWAN transceiver
+
 	lora_driver_resetRn2483(1);
 	vTaskDelay(2);
 	lora_driver_resetRn2483(0);
-	// Give it a chance to wakeup
+
 	vTaskDelay(150);
 
-	lora_driver_flushBuffers(); // get rid of first version string from module after reset!
+	lora_driver_flushBuffers();
 
 	_lora_setup();
 
@@ -139,8 +139,6 @@ void lora_handler_task( void *pvParameters )
 	_uplink_payload.portNo = 2;
 
 	TickType_t xLastWakeTime;
-	//const TickType_t xFrequency = pdMS_TO_TICKS(300000UL); // Upload message every 5 minutes (300000 ms)
-	//const TickType_t xFrequency = pdMS_TO_TICKS(300000UL);
 
 	const TickType_t xFrequency = pdMS_TO_TICKS(300000UL);
 	xLastWakeTime = xTaskGetTickCount();

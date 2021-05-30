@@ -83,15 +83,6 @@ void initialiseCO2Sensor(){
 	mh_z19_injectCallBack(myCo2CallBack);
 }
 
-
-// void getCO2Mesurement(CO2Handler_t self){
-// 	rc = mh_z19_takeMeassuring();
-// 	if (rc != MHZ19_OK)
-// 	{
-// 	}
-// 	self->co2ppm = ppm;
-// }
-
 void myCo2CallBack(uint16_t ppmCall)
 {
 	ppm = ppmCall;

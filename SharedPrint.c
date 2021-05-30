@@ -7,8 +7,6 @@
 
 SemaphoreHandle_t sharedMutex;
 
-void print_task_start(void*);
-
 void create_shared_print(){
 	sharedMutex = xSemaphoreCreateMutex();
  }
@@ -22,6 +20,5 @@ void printShared(const char *format, ...){
 	}
 	else{
 		
-	}
-	
+	}	
 }
