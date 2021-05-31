@@ -1,11 +1,3 @@
-/*
-* main.c
-* Author : IHA
-*
-* Example main file including LoRaWAN setup
-* Just for inspiration :)
-*/
-
 #include <stdio.h>
 #include <avr/io.h>
 
@@ -16,11 +8,9 @@
 #include <stdio_driver.h>
 #include <serial.h>
 
-//Hardware drivers
 #include <hih8120.h>
 #include <tsl2591.h>
 
-// Needed for LoRaWAN
 #include <lora_driver.h>
 #include <status_leds.h>
 
@@ -42,39 +32,35 @@ temperatureHandler_t temperatureHandler;
 lightReader_t lightReader;
 CO2Handler_t CO2Handler;
 
-#define ALL_SENSOR_BITS (BIT_TEMP_READY | BIT_CO2_READY | BIT_LIGHT_READY)
 
-
-
-/*-----------------------------------------------------------*/
 void create_tasks_and_semaphores(void)
 {
-create_shared_print();
-createSensors(taskReadyBits, BIT_TEMP_READY, BIT_CO2_READY, BIT_LIGHT_READY);
-lora_handler_initialise(2, temperatureHandler, lightReader, CO2Handler);
-lora_DownLinkHandler_Create(3, configMINIMAL_STACK_SIZE, downLinkMessageBufferHandle);
+	create_shared_print();
+	createSensors(taskReadyBits, BIT_TEMP_READY, BIT_CO2_READY, BIT_LIGHT_READY);
+	lora_handler_initialise(2, temperatureHandler, lightReader, CO2Handler);
+	lora_DownLinkHandler_Create(3, configMINIMAL_STACK_SIZE, downLinkMessageBufferHandle);
 }
 
 
 void initialiseSystem()
 {
 	taskReadyBits = xEventGroupCreate();
-	
-	downLinkMessageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t)*2);
+
+	downLinkMessageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t) * 2);
 
 	stdio_initialise(ser_USART0);
 
-	status_leds_initialise(5); 
-	
+	status_leds_initialise(5);
+
 	rc_servo_initialise();
-	
+
 	lora_driver_initialise(ser_USART1, downLinkMessageBufferHandle);
-	
+
 	create_tasks_and_semaphores();
 
 }
 
-void createSensors(EventGroupHandle_t taskReadyBits, EventBits_t temp_bit, EventBits_t co2_bit, EventBits_t light_bit){
+void createSensors(EventGroupHandle_t taskReadyBits, EventBits_t temp_bit, EventBits_t co2_bit, EventBits_t light_bit) {
 	temperatureHandler = temperatureHandler_create(3, taskReadyBits, temp_bit);
 	lightReader = initialiseLightDriver(3, taskReadyBits, light_bit);
 	CO2Handler = co2_create(3, taskReadyBits, co2_bit);
@@ -83,10 +69,10 @@ void createSensors(EventGroupHandle_t taskReadyBits, EventBits_t temp_bit, Event
 /*-----------------------------------------------------------*/
 int main(void)
 {
-	initialiseSystem(); // Must be done as the very first thing
-	printf("Program Started!!\n");
-	vTaskStartScheduler(); // Initialise and run the freeRTOS scheduler. Execution should never return from here.
-	while (1)
-	{
+	initialiseSystem();
+	printf("Program Starting!\n");
+	vTaskStartScheduler();
+	while (1){
+		
 	}
 }

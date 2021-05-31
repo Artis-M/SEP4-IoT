@@ -1,10 +1,3 @@
-/*
- * lightReader.h
- *
- * Created: 25/04/2021 16:17:57
- *  Author: Cata
- */ 
-
 #pragma once
 
 #include <ATMEGA_FreeRTOS.h>

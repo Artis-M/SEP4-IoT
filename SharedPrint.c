@@ -7,18 +7,18 @@
 
 SemaphoreHandle_t sharedMutex;
 
-void create_shared_print(){
+void create_shared_print() {
 	sharedMutex = xSemaphoreCreateMutex();
- }
+}
 
-void printShared(const char *format, ...){
-	  va_list lst;
-	if(xSemaphoreTake( sharedMutex,pdMS_TO_TICKS(400))==pdTRUE){
+void printShared(const char* format, ...) {
+	va_list lst;
+	if (xSemaphoreTake(sharedMutex, pdMS_TO_TICKS(400)) == pdTRUE) {
 		va_start(lst, format);
 		vprintf(format, lst);
-		xSemaphoreGive( sharedMutex);
+		xSemaphoreGive(sharedMutex);
 	}
-	else{
-		
-	}	
+	else {
+
+	}
 }

@@ -1,10 +1,3 @@
-
-/*
- * TemperatureHandler.h
- *
- * Created: 4/25/2021 3:54:05 PM
- *  Author: Artis
- */ 
 #pragma once
 #include <stdio.h>
 #include <stddef.h>

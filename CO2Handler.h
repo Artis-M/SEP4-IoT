@@ -1,11 +1,3 @@
-
-/*
- * CO2Handler.h
- *
- * Created: 4/25/2021 5:10:56 PM
- *  Author: 
- */ 
-
 #pragma once
 #include <stdio.h>
 #include <stddef.h>

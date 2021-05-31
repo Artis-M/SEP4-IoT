@@ -1,9 +1,3 @@
-/*
-* loraWANHandler.c
-*
-* Created: 12/04/2019 10:09:05
-*  Author: IHA
-*/
 #include <stddef.h>
 #include <stdio.h>
 
@@ -18,13 +12,12 @@
 #include "LightReader.h"
 #include "SharedPrint.h"
 
-// Parameters for OTAA join - You have got these in a mail from IHA
 #define LORA_appEUI "689DF9DF68156742"
 #define LORA_appKEY "B09F779D3DF66B89B996955E3B4ED977"
 
 static char _out_buf[100];
 
-void lora_handler_task( void *pvParameters );
+void lora_handler_task(void* pvParameters);
 
 static lora_driver_payload_t _uplink_payload;
 
@@ -34,20 +27,20 @@ CO2Handler_t CO2Handler;
 
 void lora_handler_initialise(UBaseType_t lora_handler_task_priority, temperatureHandler_t temperatureHandlerObj, lightReader_t lightReaderObj, CO2Handler_t CO2HandlerObj)
 {
-	
+
 	temperatureHandler = temperatureHandlerObj;
 	lightReader = lightReaderObj;
 	CO2Handler = CO2HandlerObj;
-	
-	
-printf("SETTING UP LORAWAN");
+
+
+	printf("SETTING UP LORAWAN");
 	xTaskCreate(
-	lora_handler_task
-	,  "LRHand"  // A name just for humans
-	,  configMINIMAL_STACK_SIZE+200  // This stack size can be checked & adjusted by reading the Stack Highwater
-	,  NULL
-	,  lora_handler_task_priority  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
-	,  NULL );
+		lora_handler_task
+		, "LRHand"
+		, configMINIMAL_STACK_SIZE + 200
+		, NULL
+		, lora_handler_task_priority
+		, NULL);
 }
 
 static void _lora_setup(void)
@@ -57,22 +50,22 @@ static void _lora_setup(void)
 
 	// Factory reset the transceiver
 	printf("FactoryReset >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_rn2483FactoryReset()));
-	
+
 	// Configure to EU868 LoRaWAN standards
 	printf("Configure to EU868 >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_configureToEu868()));
 
 	// Get the transceivers HW EUI
 	rc = lora_driver_getRn2483Hweui(_out_buf);
-	printf("Get HWEUI >%s<: %s\n",lora_driver_mapReturnCodeToText(rc), _out_buf);
+	printf("Get HWEUI >%s<: %s\n", lora_driver_mapReturnCodeToText(rc), _out_buf);
 
 	// Set the HWEUI as DevEUI in the LoRaWAN software stack in the transceiver
 	printf("Set DevEUI: %s >%s<\n", _out_buf, lora_driver_mapReturnCodeToText(lora_driver_setDeviceIdentifier(_out_buf)));
 
 	// Set Over The Air Activation parameters to be ready to join the LoRaWAN
-	printf("Set OTAA Identity appEUI:%s appKEY:%s devEUI:%s >%s<\n", LORA_appEUI, LORA_appKEY, _out_buf, lora_driver_mapReturnCodeToText(lora_driver_setOtaaIdentity(LORA_appEUI,LORA_appKEY,_out_buf)));
+	printf("Set OTAA Identity appEUI:%s appKEY:%s devEUI:%s >%s<\n", LORA_appEUI, LORA_appKEY, _out_buf, lora_driver_mapReturnCodeToText(lora_driver_setOtaaIdentity(LORA_appEUI, LORA_appKEY, _out_buf)));
 
 	// Save all the MAC settings in the transceiver
-	printf("Save mac >%s<\n",lora_driver_mapReturnCodeToText(lora_driver_saveMac()));
+	printf("Save mac >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_saveMac()));
 
 	// Enable Adaptive Data Rate
 	printf("Set Adaptive Data Rate: ON >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_setAdaptiveDataRate(LORA_ON)));
@@ -82,12 +75,12 @@ static void _lora_setup(void)
 
 	// Join the LoRaWAN
 	uint8_t maxJoinTriesLeft = 10;
-	
+
 	do {
 		rc = lora_driver_join(LORA_OTAA);
 		printf("Join Network TriesLeft:%d >%s<\n", maxJoinTriesLeft, lora_driver_mapReturnCodeToText(rc));
 
-		if ( rc != LORA_ACCEPTED)
+		if (rc != LORA_ACCEPTED)
 		{
 			// Make the red led pulse to tell something went wrong
 			status_leds_longPuls(led_ST1); // OPTIONAL
@@ -122,7 +115,7 @@ static void _lora_setup(void)
 	}
 }
 
-void lora_handler_task( void *pvParameters )
+void lora_handler_task(void* pvParameters)
 {
 
 	lora_driver_resetRn2483(1);
@@ -142,10 +135,10 @@ void lora_handler_task( void *pvParameters )
 
 	const TickType_t xFrequency = pdMS_TO_TICKS(300000UL);
 	xLastWakeTime = xTaskGetTickCount();
-	
-	for(;;)
+
+	for (;;)
 	{
-		xTaskDelayUntil( &xLastWakeTime, xFrequency );
+		xTaskDelayUntil(&xLastWakeTime, xFrequency);
 		printShared("Sending data to LORA \n");
 
 		getTemperatureMesurements(temperatureHandler);
@@ -156,27 +149,31 @@ void lora_handler_task( void *pvParameters )
 		reset_averageLight(lightReader);
 		uint16_t co2_ppm = getCO2(CO2Handler) + 8192;
 		reset_averageCO2(CO2Handler);
-		
+
 		_uplink_payload.bytes[0] = hum >> 8;
 		_uplink_payload.bytes[1] = hum & 0xFF;
-		
+
 		_uplink_payload.bytes[2] = temp >> 8;
 		_uplink_payload.bytes[3] = temp & 0xFF;
-		
+
 		_uplink_payload.bytes[4] = co2_ppm >> 8;
 		_uplink_payload.bytes[5] = co2_ppm & 0xFF;
 
-		_uplink_payload.bytes[6] = lux  >> 8;
+		_uplink_payload.bytes[6] = lux >> 8;
 		_uplink_payload.bytes[7] = lux & 0xFF;
 
+
+
+		//For debugging purposes
 		for (int i = 0; i < 7; i++)
 		{
 			if (i > 0) printf(":");
 			printShared("%02X", _uplink_payload.bytes[i]);
 		}
-		
 
-		status_leds_shortPuls(led_ST4);  // OPTIONAL
+		status_leds_shortPuls(led_ST4);
+
 		printShared("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));
+
 	}
 }
