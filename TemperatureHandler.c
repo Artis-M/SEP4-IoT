@@ -90,12 +90,12 @@ void getTemperatureMesurements(temperatureHandler_t self) {
 }
 int16_t getTemperature(temperatureHandler_t self) {
 	printShared("Temperature: %d", self->temperature);
-	return self->temperature;
+	return self->averageTemp / self->tempMeasurementCount;
 
 }
 uint16_t getHumidity(temperatureHandler_t self) {
 	printShared("Humidity: %d", self->humidity);
-	return self->humidity;
+	return self->averageHumidity / self->tempMeasurementCount;
 
 }
 
