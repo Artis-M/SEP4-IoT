@@ -1,5 +1,3 @@
-#include <avr/io.h>
-
 #include <ATMEGA_FreeRTOS.h>
 #include <task.h>
 #include <semphr.h>
