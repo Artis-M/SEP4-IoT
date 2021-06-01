@@ -143,7 +143,9 @@ void lora_handler_task(void* pvParameters)
 
 		getTemperatureMesurements(temperatureHandler);
 		uint16_t hum = getHumidity(temperatureHandler) + 4096;
+
 		int16_t temp = getTemperature(temperatureHandler) + 12288;
+
 		reset_averageTemperature(temperatureHandler);
 		uint16_t lux = getLight(lightReader) + 16384;
 		reset_averageLight(lightReader);
@@ -162,8 +164,6 @@ void lora_handler_task(void* pvParameters)
 		_uplink_payload.bytes[6] = lux >> 8;
 		_uplink_payload.bytes[7] = lux & 0xFF;
 
-
-
 		//For debugging purposes
 		for (int i = 0; i < 7; i++)
 		{
@@ -174,6 +174,6 @@ void lora_handler_task(void* pvParameters)
 		status_leds_shortPuls(led_ST4);
 
 		printShared("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));
-
+		
 	}
 }
