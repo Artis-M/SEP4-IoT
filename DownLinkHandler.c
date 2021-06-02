@@ -50,7 +50,7 @@ void lora_DownLinkHandler_Task(MessageBufferHandle_t messageBuffer)
 			rc_servo_setPosition(0, -100); //fully open to the right
 		}
 		else {
-			rc_servo_setPosition(0, 100); //closed
+			rc_servo_setPosition(0, 100); //open
 		}
 	}
 
